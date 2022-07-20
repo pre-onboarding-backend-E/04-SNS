@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { PostModule } from 'src/post/post.module';
 
 @Module({
   imports: [
@@ -12,7 +13,9 @@ import { AuthModule } from 'src/auth/auth.module';
       isGlobal: true,
       envFilePath: [`env/.env`],
     }),
-    UserModule,AuthModule,
+    UserModule,
+    AuthModule,
+    PostModule,
     TypeOrmModule.forRoot({
       type: 'mariadb',
       host: process.env.DB_HOST,
@@ -21,7 +24,7 @@ import { AuthModule } from 'src/auth/auth.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity.{ts,js}'],
-      synchronize: true,
+      synchronize: false,
       logging: true,
       retryAttempts: 30,
       retryDelay: 5000,

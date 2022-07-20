@@ -1,8 +1,10 @@
 import { classToPlain, Exclude } from 'class-transformer';
+import { Post } from 'src/post/entity/post.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -31,4 +33,8 @@ export class User {
   toJSON() {
     return classToPlain(this);
   }
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
+
 }

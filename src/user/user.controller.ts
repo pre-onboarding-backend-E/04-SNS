@@ -9,7 +9,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthService } from 'src/auth/auth.service';
+import { LoginInput } from 'src/auth/dto/login.dto';
 import { CurrentUser } from './decorator/currenUser';
 import { CreateUserInput } from './dto/createUser.input';
 import { UpdateUserInput } from './dto/updateUser.input';
@@ -21,32 +29,46 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(
     readonly userService: UserService, // readonly postService: PostService,
+    readonly authService: AuthService,
   ) {
     return this;
   }
 
-  @ApiBearerAuth('access_token')
-  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '로그인 API',
+  })
+  @Post('/login')
+  async getToken(@Body() input: LoginInput): Promise<string> {
+    const user = await this.authService.validateUser(
+      input.email,
+      input.password,
+    );
+    return this.authService.generateToken(user);
+  }
+
+  @ApiCreatedResponse()
+  @ApiOperation({
+    summary: '회원가입 API',
+  })
+  @Post('/user/register')
+  async createUser(@Body() input: CreateUserInput): Promise<User> {
+    return await this.userService.createUser(input);
+  }
+
+  @ApiExcludeEndpoint()
   @Get('/user/:id')
   async user(@Param('id') id: number): Promise<User> {
     const user = await this.userService.findOneById(id);
     return user;
   }
 
-  @ApiBearerAuth('access_token')
-  @UseGuards(AuthGuard('jwt'))
+  @ApiExcludeEndpoint()
   @Get('/users')
   async users(@Query() query: { take: number; skip: number }): Promise<User[]> {
     return this.userService.find(query.take, query.skip);
   }
 
-  @Post('/user/register')
-  async createUser(@Body() input: CreateUserInput): Promise<User> {
-    return await this.userService.createUser(input);
-  }
-
-  @ApiBearerAuth('access_token')
-  @UseGuards(AuthGuard('jwt'))
+  @ApiExcludeEndpoint()
   @Patch('/user')
   async updateUser(
     @CurrentUser() user: User,
