@@ -1,16 +1,6 @@
 version: '3.7'
 
 services:
-  backend-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./env/.env:/sns-app/env/.env
-      - ./src:/sns-app/src
-    ports:
-      - 3000:3000
-
   database-server:
     image: mysql:5.7
     restart: always
@@ -29,3 +19,12 @@ services:
       ]
     ports:
       - 3309:3309
+  backend-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./env/.env:/sns-app/env/.env
+      - ./src:/sns-app/src
+    ports:
+      - 3000:3000

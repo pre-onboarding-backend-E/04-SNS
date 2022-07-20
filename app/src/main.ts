@@ -23,6 +23,17 @@ async function bootstrap() {
       '사용자는 서비스를 통해 게시물을 업로드 하거나, 다른 사람의 게시물을 확인할 수 있습니다.',
     )
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'access_token',
+        description: 'access token을 입력하세요.',
+        in: 'header',
+      },
+      'access_token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
