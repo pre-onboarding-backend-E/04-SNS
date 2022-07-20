@@ -35,6 +35,7 @@ export class Post {
   //해시 태그
   @OneToMany(() => Hashtags, (tags) => tags.posts, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   tags: Hashtags[];
 
