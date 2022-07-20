@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
@@ -15,7 +19,11 @@ export class PostService {
   ) {}
 
   async findOne(id: number): Promise<Post> {
-    return await this.postRepository.findOne({ where: { id } });
+    return await this.postRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
   }
 
   // 서울 검색 -> 서울 혹은 서울, 맛집 // 서울맛집은 X
@@ -47,16 +55,35 @@ export class PostService {
     return await this.postRepository.save(posting);
   }
 
-  async updatePost(Post: Post, input: UpdatePostInput): Promise<Post> {
-    Object.keys(input).forEach((key) => {
-      Post[key] = input[key];
-    });
+  async updatePost(
+    user: User,
+    id: number,
+    input: UpdatePostInput,
+  ): Promise<Post> {
+    const existPost: Post = await this.postRepository
+      .createQueryBuilder('post')
+      .where('post.id=:id', { id })
+      .andWhere('post.user.id=:userId', { userId: user.id })
+      .getOne();
+    if (!existPost) throw new NotFoundException('posting info not found');
 
-    return await this.postRepository.save(Post);
+    Object.keys(input).forEach((key) => {
+      existPost[key] = input[key];
+    });
+    return existPost;
   }
 
-  // soft delete
   async deletePost(user: User, id: number): Promise<void> {
-    await this.postRepository.delete(id);
+    const existPost: Post = await this.postRepository
+      .createQueryBuilder('post')
+      .where('post.id=:id', { id })
+      .andWhere('post.user.id=:userId', { userId: user.id })
+      .getOne();
+    if (!existPost) throw new NotFoundException('posting info not found');
+    await this.postRepository.softDelete(id);
   }
 }
+// filter dto 적용
+// exist Post 중복 로직 하나로 처리
+// restore 로직 추가
+// 좋아요 / 조회수

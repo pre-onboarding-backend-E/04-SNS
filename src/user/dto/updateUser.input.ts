@@ -3,7 +3,5 @@ export class UpdateUserInput {
 
   email?: string;
 
-  slug?: string;
-
   password?: string;
 }

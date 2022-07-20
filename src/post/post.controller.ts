@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Query,
   UnauthorizedException,
   UseGuards,
@@ -29,8 +28,8 @@ export class PostController {
 
   // public api
   @Get('/post/:id')
-  async post(@Param() params: { id: number }): Promise<PostEntity> {
-    return this.postService.findOne(params.id);
+  async post(@Param('id') id: number): Promise<PostEntity> {
+    return await this.postService.findOne(id);
   }
 
   // public api
@@ -57,12 +56,10 @@ export class PostController {
   @Patch('/post/:id')
   async updatePost(
     @CurrentUser() user: User,
-    @Param() param: { id: number },
+    @Param('id') id: number,
     @Body() input: UpdatePostInput,
   ): Promise<PostEntity> {
-    const post = await this.postService.findOne(param.id);
-
-    return this.postService.updatePost(post, input);
+    return this.postService.updatePost(user, id, input);
   }
 
   @ApiBearerAuth('access_token')
@@ -70,10 +67,8 @@ export class PostController {
   @Delete('/post/:id')
   async deletePost(
     @CurrentUser() user: User,
-    @Param() id: number,
-  ): Promise<PostEntity> {
-    let post = await this.postService.findOne(id);
-
-    return post;
+    @Param('id') id: number,
+  ): Promise<void> {
+    await this.postService.deletePost(user, id);
   }
 }
