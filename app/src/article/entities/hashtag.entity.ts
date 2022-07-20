@@ -3,13 +3,13 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
-import { Article } from './article.entity';
+import { ArticleHashtag } from './article_hashtag.entity';
 
 @Entity()
-export class HashTag {
+export class Hashtag {
   @ApiProperty()
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -23,6 +23,10 @@ export class HashTag {
   })
   hashtag: string;
 
-  @ManyToMany(() => Article, (article) => article.hashtag, { cascade: true })
-  article: Article[];
+  @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.hashtag, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  articleHashtag: ArticleHashtag[];
 }

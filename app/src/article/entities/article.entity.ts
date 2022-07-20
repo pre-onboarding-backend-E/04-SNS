@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 import { User } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -10,18 +9,16 @@ import {
   DeleteDateColumn,
   OneToMany,
   ManyToOne,
-  ManyToMany,
   JoinColumn,
-  JoinTable,
 } from 'typeorm';
 import { Like } from './like.entity';
 import { Comment } from './comment.entity';
-import { HashTag } from './hashtag.entity';
+import { ArticleHashtag } from './article_hashtag.entity';
 @Entity()
 export class Article {
   @ApiProperty()
   @PrimaryGeneratedColumn('increment')
-  id: number;
+  public id: number;
 
   @ApiProperty({
     description: '게시글 제목',
@@ -31,7 +28,7 @@ export class Article {
     nullable: false,
     length: 50,
   })
-  title: string;
+  public title: string;
 
   @ApiProperty({
     description: '게시글 내용',
@@ -40,14 +37,14 @@ export class Article {
   @Column({
     nullable: false,
   })
-  content: string;
+  public content: string;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  createdAt: Date;
+  public createdAt: Date;
 
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({
@@ -55,21 +52,21 @@ export class Article {
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
-  updatedAt: Date;
+  public updatedAt: Date;
 
   @ApiProperty({ description: '삭제일' })
   @DeleteDateColumn({
     type: 'timestamp',
     nullable: true,
   })
-  deletedAt: Date;
+  public deletedAt: Date;
 
   @ManyToOne(() => User, (user) => user.article, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
-  public user: User;
+  user: User;
 
   @OneToMany(() => Like, (like) => like.article, {
     nullable: true,
@@ -85,7 +82,10 @@ export class Article {
   @JoinColumn()
   comment: Comment[];
 
-  @ManyToMany(() => HashTag, (hashtag) => hashtag.article)
-  @JoinTable()
-  hashtag: HashTag[];
+  @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.article, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  articleHashtag: ArticleHashtag[];
 }
