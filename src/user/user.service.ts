@@ -30,11 +30,13 @@ export class UserService {
     });
   }
 
-  // find one id 추가
   async createUser(input: CreateUserInput): Promise<User> {
+    const userExistCheck = this.findOne(input.email);
+    if (userExistCheck) throw new BadRequestException('user already exists');
+
     const { email, password, confirmPassword } = input;
     if (password !== confirmPassword) {
-      throw new BadRequestException('비밀번호가 서로 일치하지 않습니다.');
+      throw new BadRequestException('invalid password');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = this.userRepository.create({
