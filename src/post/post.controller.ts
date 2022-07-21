@@ -21,6 +21,7 @@ import {
 import { CurrentUser } from 'src/user/decorator/currenUser';
 import { User } from '..//user/user.entity';
 import { CreatePostInput } from './dto/createPost.input';
+import { filterPostDto } from './dto/filterPost.input';
 import { UpdatePostInput } from './dto/updatePost.input';
 import { Post as PostEntity } from './entity/post.entity';
 import { PostService } from './post.service';
@@ -38,7 +39,7 @@ export class PostController {
   })
   @Get('/:postId')
   async getPost(@Param('postId') id: number): Promise<PostEntity> {
-    return await this.postService.findOne(id);
+    return this.postService.getOnePost(id);
   }
 
   // public api
@@ -46,11 +47,8 @@ export class PostController {
     summary: '게시물 목록 조회 API',
   })
   @Get('/')
-  async posts(
-    @Query() query: { take: number; skip: number },
-  ): Promise<PostEntity[]> {
-    console.log(query.take, typeof query.take);
-    return this.postService.findAllPosts(query.take, query.skip);
+  async posts(@Query() filter: filterPostDto): Promise<PostEntity[]> {
+    return this.postService.getAllPosts(filter);
   }
 
   @ApiOperation({
@@ -99,10 +97,10 @@ export class PostController {
   @Patch('/:postId/restore')
   @ApiBearerAuth('access_token')
   @UseGuards(AuthGuard('jwt'))
-  async restoreOne(
+  async restorePost(
     @Param('postId', ParseIntPipe) id: number,
     @CurrentUser() user: User,
   ) {
-    return await this.postService.restoreMoneyBook(id, user);
+    return this.postService.restorePost(id, user);
   }
 }

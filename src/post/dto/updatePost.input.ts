@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
 import { Hashtags } from '../entity/hashTag.entity';
 
 export class UpdatePostInput {
-
   @ApiProperty({ description: '제목', example: 'title변경', required: false })
   title?: string;
-
 
   @ApiProperty({ description: '내용', example: 'content변경', required: false })
   content?: string;

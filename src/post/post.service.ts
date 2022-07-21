@@ -5,8 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { Like } from 'typeorm';
 import { CreatePostInput } from './dto/createPost.input';
+import { filterPostDto } from './dto/filterPost.input';
 import { UpdatePostInput } from './dto/updatePost.input';
 import { Hashtags } from './entity/hashTag.entity';
 import { Post } from './entity/post.entity';
@@ -20,7 +22,7 @@ export class PostService {
     private tagRepository: Repository<Hashtags>,
   ) {}
 
-  async findOne(id: number): Promise<Post> {
+  async getOnePost(id: number): Promise<Post> {
     const result = await this.postRepository.findOne({
       where: {
         id: id,
@@ -31,15 +33,52 @@ export class PostService {
     return result;
   }
 
-  // offset & limit 으로 변경
-  async findAllPosts(take: number, skip: number): Promise<Post[]> {
-    const allPost = await this.postRepository.find({
-      relations: ['tags'],
-      take,
-      skip,
-    });
-    console.log(111, allPost);
-    return allPost;
+  /**
+   * @description
+   * - 각각 filter / search / ordering / pagination 기능을 구현했습니다.
+   */
+
+  async getAllPosts(filter: filterPostDto): Promise<Post[]> {
+    const allPost = await this.postRepository
+      .createQueryBuilder('posts')
+      .leftJoinAndSelect('posts.tags', 'tags')
+      .take(filter.take) //lIMITS
+      .skip(filter.skip); //offset
+
+    // 제목에 검색어가 포함될 때
+    if (filter.keyword.length > 0 && filter.tag.length == 0) {
+      allPost.andWhere('posts.title LIKE (:searchKey)', {
+        searchKey: `%${filter.keyword}%`,
+      });
+    }
+    // 해시 태그와 정확히 일치할 때
+    const prefix = '#';
+    const hashTag = filter.tag || '';
+    if (filter.tag.length > 0 && filter.keyword.length == 0) {
+      allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: prefix + hashTag });
+    }
+
+    // filter와 search 함께 있을 때
+    if (filter.keyword.length > 0 && filter.keyword.length > 0) {
+      allPost.andWhere('posts.title LIKE (:searchKey)', {
+        searchKey: `%${filter.keyword}%`,
+      });
+      allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: prefix + hashTag });
+    }
+
+    // 작성일 최신 순
+    if (filter.sortedType == 'DESC') {
+      allPost.orderBy({
+        'posts.createdAt': 'DESC',
+      });
+    }
+    //  작성일 오래된 순
+    if (filter.sortedType == 'ASC') {
+      allPost.orderBy({
+        'posts.createdAt': 'ASC',
+      });
+    }
+    return await allPost.getMany();
   }
 
   async createPost(user: User, input: CreatePostInput): Promise<Post> {
@@ -92,7 +131,7 @@ export class PostService {
 
     const tagList = [];
     const prefix = '#';
-    input.tag.map(async (item) => {
+    input.tag.forEach(async (item) => {
       const hasTags = new Hashtags();
       hasTags.tag = prefix + item.tag;
       tagList.push(hasTags);
@@ -118,10 +157,10 @@ export class PostService {
     return existPost;
   }
 
-  async restoreMoneyBook(id: number, user: User): Promise<any> {
+  async restorePost(id: number, user: User): Promise<Post> {
     const existPost = await this.postRepository
       .createQueryBuilder('post')
-      .withDeleted() // true
+      .withDeleted()
       .innerJoinAndSelect('post.tags', 'tags')
       .where('post.id=:id', { id })
       .andWhere('post.user.id=:userId', { userId: user.id })
@@ -135,7 +174,6 @@ export class PostService {
     }
 
     existPost.deletedAt = null;
-    await this.postRepository.save(existPost);
-    return existPost;
+    return await this.postRepository.save(existPost);
   }
 }
