@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
-import { Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { CreatePostInput } from './dto/createPost.input';
 import { filterPostDto } from './dto/filterPost.input';
 import { UpdatePostInput } from './dto/updatePost.input';
@@ -49,17 +49,17 @@ export class PostService {
         searchKey: `%${filter.keyword}%`,
       });
     }
-    const prefix = '#';
+
     const hashTag = filter.tag || '';
     if (filter.tag.length > 0 && filter.keyword.length == 0) {
-      allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: prefix + hashTag });
+      allPost.andWhere('tags.tag IN (:...hashTag)', { hashTag: [hashTag] });
     }
 
     if (filter.keyword.length > 0 && filter.keyword.length > 0) {
       allPost.andWhere('posts.title LIKE (:searchKey)', {
         searchKey: `%${filter.keyword}%`,
       });
-      allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: prefix + hashTag });
+      allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: hashTag });
     }
 
     if (filter.sortedType == 'DESC') {
@@ -87,10 +87,9 @@ export class PostService {
     posting.content = input.content;
 
     const tagList = [];
-    const prefix = '#';
     input.tag.forEach(async item => {
       const hasTags = new Hashtags();
-      hasTags.tag = prefix + item.tag;
+      hasTags.tag = item.tag;
       tagList.push(hasTags);
     });
     posting.tags = tagList;
@@ -116,10 +115,9 @@ export class PostService {
     await this.tagRepository.createQueryBuilder().delete().from(Hashtags).where('posts.id= :id', { id }).execute();
 
     const tagList = [];
-    const prefix = '#';
     input.tag.forEach(async item => {
       const hasTags = new Hashtags();
-      hasTags.tag = prefix + item.tag;
+      hasTags.tag = item.tag;
       tagList.push(hasTags);
     });
     post.tags = tagList;

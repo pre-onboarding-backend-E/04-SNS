@@ -6,7 +6,11 @@ export class filterPostDto {
   keyword?: Array<string>;
 
   // filtering - 해시 태그 (명확하게 일치하는 것만 노출)
-  @ApiProperty({ description: '해시태그 (기본 값으로는 공백을 보냅니다)', nullable: true, required: false })
+  @ApiProperty({
+    description: '해시태그 (기본 값으로는 공백을 보냅니다.)',
+    nullable: true,
+    required: false,
+  })
   tag?: Array<string>;
 
   // ordering (정렬) - 기본 작성일 기준 내림차 순
