@@ -20,13 +20,14 @@ export class Hashtag {
   })
   @Column({
     nullable: false,
+    unique: true,
   })
   hashtag: string;
 
-  @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.hashtag, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn()
-  articleHashtag: ArticleHashtag[];
+  // @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.hashtag, {
+  //   nullable: true,
+  //   cascade: true,
+  // })
+  // @JoinColumn()
+  // articleHashtag: ArticleHashtag[];
 }

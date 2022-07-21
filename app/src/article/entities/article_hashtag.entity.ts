@@ -15,19 +15,19 @@ export class ArticleHashtag {
   @PrimaryGeneratedColumn('increment')
   public id: number;
 
-  @ManyToOne(() => Hashtag, (hashtag) => hashtag.articleHashtag, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'hashtagId' })
-  public hashtag: Hashtag;
+  // @ManyToOne(() => Hashtag, (hashtag) => hashtag.articleHashtag, {
+  //   nullable: false,
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'hashtagId' })
+  // public hashtag: Hashtag;
 
-  @ManyToOne(() => Article, (article) => article.articleHashtag, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'articleId' })
-  public article: Article;
+  // @ManyToOne(() => Article, (article) => article.articleHashtag, {
+  //   nullable: false,
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'articleId' })
+  // public article: Article;
 
   /**
    * Join 테이블에 CreatedAt을 생성한 이유는 나중에 트랜드 해시태그 등

@@ -26,7 +26,7 @@ export class Article {
   })
   @Column({
     nullable: false,
-    length: 50,
+    length: 80,
   })
   public title: string;
 
@@ -38,6 +38,12 @@ export class Article {
     nullable: false,
   })
   public content: string;
+
+  @ApiProperty({ description: '해시태그' })
+  @Column({
+    nullable: true,
+  })
+  public hashtag: string;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({
@@ -82,10 +88,10 @@ export class Article {
   @JoinColumn()
   comment: Comment[];
 
-  @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.article, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn()
-  articleHashtag: ArticleHashtag[];
+  // @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.article, {
+  //   nullable: true,
+  //   cascade: true,
+  // })
+  // @JoinColumn()
+  // articleHashtag: ArticleHashtag[];
 }
