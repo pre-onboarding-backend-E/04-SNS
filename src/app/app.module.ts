@@ -28,7 +28,7 @@ import { PostModule } from 'src/post/post.module';
       logging: true,
       retryAttempts: 30,
       retryDelay: 5000,
-      timezone: 'Z',
+      timezone: '+09:00',
     }),
   ],
   controllers: [AppController],

@@ -25,16 +25,17 @@ export class Post {
   content: string;
 
   //좋아요
-  @Column({ default: null, nullable: true })
+  @Column({ default: 0, nullable: true })
   likes: number;
 
   //조회수
-  @Column({ default: null, nullable: true })
+  @Column({ default: 0, nullable: true })
   views: number;
 
   //해시 태그
   @OneToMany(() => Hashtags, (tags) => tags.posts, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   tags: Hashtags[];
 
