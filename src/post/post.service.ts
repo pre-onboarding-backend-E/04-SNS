@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
 import { CreatePostInput } from './dto/createPost.input';
-import { UpdatePostInput } from './dto/update.post.input';
+import { UpdatePostInput } from './dto/updatePost.input';
 import { Hashtags } from './entity/hashTag.entity';
 import { Post } from './entity/post.entity';
 
@@ -24,8 +24,8 @@ export class PostService {
         id: id,
       },
     });
-    if(!result) throw new NotFoundException('~~')
-    return result
+    if (!result) throw new NotFoundException('~~');
+    return result;
   }
 
   // 서울 검색 -> 서울 혹은 서울, 맛집 // 서울맛집은 X
@@ -65,9 +65,10 @@ export class PostService {
     const updatedPost = await this.existPostCheck(user, id);
 
     Object.keys(input).forEach((key) => {
+      if(input.content || input.title)
       updatedPost[key] = input[key];
-
-      // key에 tag있을 때만 들어가도록 추가.
+    });
+    if (input.hasOwnProperty('tags')) {
       const tagList = [];
       const prefix = '#';
       input.tag.forEach(async (item) => {
@@ -76,7 +77,7 @@ export class PostService {
         tagList.push(hasTags);
       });
       updatedPost.tags = tagList;
-    });
+    }
 
     const result = this.postRepository.save(updatedPost);
     return result;
@@ -98,6 +99,24 @@ export class PostService {
     return existPost;
   }
 
-  //   async restorePost(user: User, id: number): Promise<Post> {
-  //   }
+  async restoreMoneyBook(id: number, user: User): Promise<any> {
+    const existPost = await this.postRepository
+      .createQueryBuilder('post')
+      .withDeleted() // true
+      .innerJoinAndSelect('post.tags', 'tags')
+      .where('post.id=:id', { id })
+      .andWhere('post.user.id=:userId', { userId: user.id })
+      .getOne();
+
+    if (!existPost) {
+      throw new NotFoundException('존재하지 않는 내역입니다.');
+    }
+    if (existPost.deletedAt === null) {
+      throw new BadRequestException('삭제되지 않은 내역입니다.');
+    }
+
+    existPost.deletedAt = null;
+    await this.postRepository.save(existPost);
+    return existPost;
+  }
 }

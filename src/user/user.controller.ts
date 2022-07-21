@@ -46,7 +46,6 @@ export class UserController {
     return this.authService.generateToken(user);
   }
 
-  @ApiCreatedResponse()
   @ApiOperation({
     summary: '회원가입 API',
   })

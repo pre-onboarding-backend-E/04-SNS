@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -11,11 +12,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser } from 'src/user/decorator/currenUser';
 import { User } from '..//user/user.entity';
 import { CreatePostInput } from './dto/createPost.input';
-import { UpdatePostInput } from './dto/update.post.input';
+import { UpdatePostInput } from './dto/updatePost.input';
 import { Post as PostEntity } from './entity/post.entity';
 import { PostService } from './post.service';
 
@@ -74,7 +80,6 @@ export class PostController {
     return this.postService.updatePost(user, id, input);
   }
 
-
   @ApiOperation({
     summary: '게시물 삭제 조회 API',
   })
@@ -86,5 +91,18 @@ export class PostController {
     @Param('postId') id: number,
   ): Promise<void> {
     await this.postService.deletePost(user, id);
+  }
+
+  @ApiOperation({
+    summary: '게시물 삭제 조회 API',
+  })
+  @Patch('/:postId/restore')
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  async restoreOne(
+    @Param('postId', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ) {
+    return await this.postService.restoreMoneyBook(id, user);
   }
 }
