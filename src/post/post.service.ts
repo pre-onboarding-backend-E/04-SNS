@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
-import { Like } from 'typeorm';
 import { CreatePostInput } from './dto/createPost.input';
 import { filterPostDto } from './dto/filterPost.input';
 import { UpdatePostInput } from './dto/updatePost.input';
@@ -22,6 +17,9 @@ export class PostService {
     private tagRepository: Repository<Hashtags>,
   ) {}
 
+  /**
+   * @description 게시글 상세 조회 로직
+   */
   async getOnePost(id: number): Promise<Post> {
     const result = await this.postRepository.findOne({
       where: {
@@ -34,8 +32,9 @@ export class PostService {
   }
 
   /**
-   * @description
-   * - 각각 filter / search / ordering / pagination 기능을 구현했습니다.
+   * @description 게시글 조회 로직
+   * - 각각 filter / search / ordering / pagination 기능을 구현함.
+   * - filter 상세 설명은 filterPostDto를 참조함.
    */
 
   async getAllPosts(filter: filterPostDto): Promise<Post[]> {
@@ -45,20 +44,17 @@ export class PostService {
       .take(filter.take) //lIMITS
       .skip(filter.skip); //offset
 
-    // 제목에 검색어가 포함될 때
     if (filter.keyword.length > 0 && filter.tag.length == 0) {
       allPost.andWhere('posts.title LIKE (:searchKey)', {
         searchKey: `%${filter.keyword}%`,
       });
     }
-    // 해시 태그와 정확히 일치할 때
     const prefix = '#';
     const hashTag = filter.tag || '';
     if (filter.tag.length > 0 && filter.keyword.length == 0) {
       allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: prefix + hashTag });
     }
 
-    // filter와 search 함께 있을 때
     if (filter.keyword.length > 0 && filter.keyword.length > 0) {
       allPost.andWhere('posts.title LIKE (:searchKey)', {
         searchKey: `%${filter.keyword}%`,
@@ -66,13 +62,12 @@ export class PostService {
       allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: prefix + hashTag });
     }
 
-    // 작성일 최신 순
     if (filter.sortedType == 'DESC') {
       allPost.orderBy({
         'posts.createdAt': 'DESC',
       });
     }
-    //  작성일 오래된 순
+
     if (filter.sortedType == 'ASC') {
       allPost.orderBy({
         'posts.createdAt': 'ASC',
@@ -81,6 +76,9 @@ export class PostService {
     return await allPost.getMany();
   }
 
+  /**
+   * @description 게시글 생성 로직
+   */
   async createPost(user: User, input: CreatePostInput): Promise<Post> {
     const posting: Post = new Post();
 
@@ -90,7 +88,7 @@ export class PostService {
 
     const tagList = [];
     const prefix = '#';
-    input.tag.forEach(async (item) => {
+    input.tag.forEach(async item => {
       const hasTags = new Hashtags();
       hasTags.tag = prefix + item.tag;
       tagList.push(hasTags);
@@ -101,37 +99,25 @@ export class PostService {
   }
 
   /**
-   * @description
+   * @description 게시글 수정 로직
    * - 해당 포스트의 존재 여부를 체크함.
    * - 해당 포스트 글 정보를 새로운 input의 정보로 변경하여 저장함.
    * - hash tag table은 매핑 테이블이기에 기존 정보를 지우고 새로운 정보로 업데이트하는 로직으로 구현. (데이터 과 적재 방지)
    * - 변경이 필요하지 않은 값들은 key를 제외하고 보냄.
    */
-  async updatePost(
-    user: User,
-    id: number,
-    input: UpdatePostInput,
-  ): Promise<Post> {
+  async updatePost(user: User, id: number, input: UpdatePostInput): Promise<Post> {
     await this.existPostCheck(user, id);
 
-    const post: Post = await this.postRepository
-      .createQueryBuilder('posts')
-      .where('posts.id = :id', { id })
-      .getOne();
+    const post: Post = await this.postRepository.createQueryBuilder('posts').where('posts.id = :id', { id }).getOne();
 
     post.title = input.title;
     post.content = input.content;
 
-    await this.tagRepository
-      .createQueryBuilder()
-      .delete()
-      .from(Hashtags)
-      .where('posts.id= :id', { id })
-      .execute();
+    await this.tagRepository.createQueryBuilder().delete().from(Hashtags).where('posts.id= :id', { id }).execute();
 
     const tagList = [];
     const prefix = '#';
-    input.tag.forEach(async (item) => {
+    input.tag.forEach(async item => {
       const hasTags = new Hashtags();
       hasTags.tag = prefix + item.tag;
       tagList.push(hasTags);
@@ -141,20 +127,12 @@ export class PostService {
     return post;
   }
 
+  /**
+   * @description 게시글 삭제 및 복구 로직
+   */
   async deletePost(user: User, id: number): Promise<void> {
     await this.existPostCheck(user, id);
     await this.postRepository.softDelete(id);
-  }
-
-  async existPostCheck(user: User, id: number): Promise<Post> {
-    const existPost: Post = await this.postRepository
-      .createQueryBuilder('post')
-      // .leftJoinAndSelect('post.tags', 'tags')
-      .where('post.id=:id', { id })
-      .andWhere('post.user.id=:userId', { userId: user.id })
-      .getOne();
-    if (!existPost) throw new NotFoundException('posting info not found');
-    return existPost;
   }
 
   async restorePost(id: number, user: User): Promise<Post> {
@@ -172,8 +150,18 @@ export class PostService {
     if (existPost.deletedAt === null) {
       throw new BadRequestException('삭제되지 않은 내역입니다.');
     }
-
     existPost.deletedAt = null;
     return await this.postRepository.save(existPost);
+  }
+
+  async existPostCheck(user: User, id: number): Promise<Post> {
+    const existPost: Post = await this.postRepository
+      .createQueryBuilder('post')
+      // .leftJoinAndSelect('post.tags', 'tags')
+      .where('post.id=:id', { id })
+      .andWhere('post.user.id=:userId', { userId: user.id })
+      .getOne();
+    if (!existPost) throw new NotFoundException('posting info not found');
+    return existPost;
   }
 }
