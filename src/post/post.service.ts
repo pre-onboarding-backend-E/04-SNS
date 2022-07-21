@@ -59,7 +59,7 @@ export class PostService {
       allPost.andWhere('posts.title LIKE (:searchKey)', {
         searchKey: `%${filter.keyword}%`,
       });
-      allPost.andWhere('tags.tag IN (:hashTag)', { hashTag: hashTag });
+      allPost.andWhere('tags.tag IN (:...hashTag)', { hashTag: [hashTag] });
     }
 
     if (filter.sortedType == 'DESC') {
