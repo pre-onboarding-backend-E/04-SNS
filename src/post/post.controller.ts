@@ -94,7 +94,7 @@ export class PostController {
   }
 
   @ApiOperation({
-    summary: '게시물 삭제 조회 API',
+    summary: '삭제된 게시물 복구 API',
   })
   @Patch('/:postId/restore')
   @ApiBearerAuth('access_token')
