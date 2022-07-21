@@ -45,6 +45,18 @@ export class Article {
   })
   public hashtag: string;
 
+  @ApiProperty({ description: '좋아요 수' })
+  @Column({
+    default: 0,
+  })
+  public totalLike: number;
+
+  @ApiProperty({ description: '조회수' })
+  @Column({
+    default: 0,
+  })
+  public totalView: number;
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({
     type: 'timestamp',
@@ -88,10 +100,10 @@ export class Article {
   @JoinColumn()
   comment: Comment[];
 
-  // @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.article, {
-  //   nullable: true,
-  //   cascade: true,
-  // })
-  // @JoinColumn()
-  // articleHashtag: ArticleHashtag[];
+  @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.article, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  articleHashtag: ArticleHashtag[];
 }

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -12,6 +13,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
@@ -20,19 +22,21 @@ import { MSG } from 'src/utils/responseHandler/response.enum';
 import { ArticleService } from './article.service';
 import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
+import { Article } from './entities/article.entity';
 
 @ApiTags('Articles')
-@ApiBearerAuth('access_token')
-@UseGuards(AuthGuard('jwt'))
 @Controller('articles')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  //   /**
-  //    * @description 게시글 상세 내용 요청
-  //    * */
-  //   @Get()
-  //   async getOneArticle() {}
+  /**
+   * @description 게시글 상세 내용 요청
+   * */
+  @ApiResponse({ description: MSG.getOneArticle.msg })
+  @Get('/:id')
+  async getOneArticle(@Param('id') articleId: number): Promise<object> {
+    return await this.articleService.getOneArticle(articleId);
+  }
 
   //   /**
   //    * @description 게시글 리스트 요청
@@ -45,6 +49,8 @@ export class ArticleController {
    * */
   @ApiBody({ type: CreateArticleDTO })
   @ApiCreatedResponse({ description: MSG.createArticle.msg })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createArticle(
     @Body() createArticleData: CreateArticleDTO,
@@ -64,12 +70,33 @@ export class ArticleController {
   //   /**
   //    * @description 게시글 수정
   //    * */
-  //   @Patch()
-  //   async updateArticle() {}
+  // @ApiCreatedResponse({ description: MSG.deleteArticle.msg })
+  // @ApiBearerAuth('access_token')
+  // @UseGuards(AuthGuard('jwt'))
+  // @Patch('/:id')
+  // async updateArticle(@Param('id') articleId: number, @GetUser() user: User) {
+  //   const result = await this.articleService.updateArticle(articleId, user);
+  //   return DefaultResponse.response(
+  //     result,
+  //     MSG.updateArticle.code,
+  //     MSG.updateArticle.msg,
+  //   );
+  // }
 
-  //   /**
-  //    * @description 게시글 삭제
-  //    * */
-  //   @Delete()
-  //   async deleteArticle() {}
+  /**
+   * @description 게시글 삭제
+   * */
+
+  @ApiCreatedResponse({ description: MSG.deleteArticle.msg })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('/:id')
+  async deleteArticle(@Param('id') articleId: number, @GetUser() user: User) {
+    const result = await this.articleService.deleteArticle(articleId, user);
+    return DefaultResponse.response(
+      result,
+      MSG.deleteArticle.code,
+      MSG.deleteArticle.msg,
+    );
+  }
 }
