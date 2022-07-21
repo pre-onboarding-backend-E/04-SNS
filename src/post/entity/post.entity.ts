@@ -48,7 +48,7 @@ export class Post {
   updatedAt: Date;
 
   @Exclude({ toPlainOnly: true })
-  @DeleteDateColumn()
+  @DeleteDateColumn({default:null})
   deletedAt: Date;
 
   @Exclude({ toPlainOnly: true })
