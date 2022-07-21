@@ -33,7 +33,7 @@ import { ConfigModule } from '@nestjs/config';
       timezone: 'Z',
     }),
   ],
-  controllers: [AppController, ArticleController],
-  providers: [AppService, ArticleService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
