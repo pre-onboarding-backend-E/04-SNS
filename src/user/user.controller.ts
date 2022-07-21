@@ -50,7 +50,7 @@ export class UserController {
   @ApiOperation({
     summary: '회원가입 API',
   })
-  @Post('/user/register')
+  @Post('/register')
   async createUser(@Body() input: CreateUserInput): Promise<User> {
     return await this.userService.createUser(input);
   }

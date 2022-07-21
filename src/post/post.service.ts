@@ -19,11 +19,13 @@ export class PostService {
   ) {}
 
   async findOne(id: number): Promise<Post> {
-    return await this.postRepository.findOne({
+    const result = await this.postRepository.findOne({
       where: {
         id: id,
       },
     });
+    if(!result) throw new NotFoundException('~~')
+    return result
   }
 
   // 서울 검색 -> 서울 혹은 서울, 맛집 // 서울맛집은 X
@@ -45,7 +47,7 @@ export class PostService {
 
     const tagList = [];
     const prefix = '#';
-    input.tag.map(async (item) => {
+    input.tag.forEach(async (item) => {
       const hasTags = new Hashtags();
       hasTags.tag = prefix + item.tag;
       tagList.push(hasTags);
@@ -65,6 +67,7 @@ export class PostService {
     Object.keys(input).forEach((key) => {
       updatedPost[key] = input[key];
 
+      // key에 tag있을 때만 들어가도록 추가.
       const tagList = [];
       const prefix = '#';
       input.tag.forEach(async (item) => {
@@ -84,12 +87,6 @@ export class PostService {
     await this.postRepository.softDelete(id); // hash tag도 함께 soft delete 처리
   }
 
-  //   async restorePost(user: User, id: number): Promise<Post> {
-  //   }
-
-  // filter dto 적용
-  // restore 로직 추가
-  // swagger 및 response 정리 (게시글 리스트 / 태그)
   async existPostCheck(user: User, id: number): Promise<Post> {
     const existPost: Post = await this.postRepository
       .createQueryBuilder('post')
@@ -100,4 +97,7 @@ export class PostService {
     if (!existPost) throw new NotFoundException('posting info not found');
     return existPost;
   }
+
+  //   async restorePost(user: User, id: number): Promise<Post> {
+  //   }
 }
