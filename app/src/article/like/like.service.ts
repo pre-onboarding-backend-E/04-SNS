@@ -15,37 +15,39 @@ export class LikeService {
   constructor(
     @InjectRepository(Like)
     private likeRepository: Repository<Like>,
+    @InjectRepository(Article)
+    private articleRepository: Repository<Article>,
   ) {}
 
   /**
    * @description 게시글 좋아요 요청
    */
   public async likeArticle(articleId: number, user: User): Promise<object> {
-    const isLike = await this.likeRepository
+    const isExist = await this.likeRepository
       .createQueryBuilder()
-      .withDeleted()
       .where('userId = :userId', { userId: user.id })
       .andWhere('articleId = :articleId', { articleId })
       .getOne();
 
-    if (!isLike.deletedAt) {
+    if (isExist) {
       throw new ConflictException('이미 좋아요를 눌렀습니다.');
     }
+
     try {
-      let result;
-      if (isLike.deletedAt) {
-        // 삭제된 좋아요
-        isLike.deletedAt = null;
-        result = await this.likeRepository.save(isLike);
-        return result;
-      }
       const like = await this.likeRepository.create({
         userId: user.id,
         articleId,
-        deletedAt: null,
       });
-      result = await this.likeRepository.save(like);
-      return result;
+
+      const article = await this.articleRepository.findOne({
+        where: { id: articleId },
+      });
+      article.totalLike++;
+
+      await this.likeRepository.insert(like);
+      const updateTotalLike = await this.articleRepository.save(article);
+
+      return { totalLike: updateTotalLike.totalLike };
     } catch (e) {
       throw new InternalServerErrorException();
     }
@@ -56,11 +58,21 @@ export class LikeService {
    */
   public async unLikeArticle(articleId: number, user: User): Promise<object> {
     try {
-      const result = await this.likeRepository.softDelete({
-        articleId: articleId,
-        userId: user['id'],
+      await this.likeRepository
+        .createQueryBuilder()
+        .delete()
+        .from(Like)
+        .where('articleId = :articleId', { articleId })
+        .andWhere('userId = :userId', { userId: user.id })
+        .execute();
+
+      const article = await this.articleRepository.findOne({
+        where: { id: articleId },
       });
-      return result;
+      article.totalLike--;
+
+      const result = await this.articleRepository.save(article);
+      return { totalLike: result.totalLike };
     } catch (e) {
       throw new NotFoundException();
     }

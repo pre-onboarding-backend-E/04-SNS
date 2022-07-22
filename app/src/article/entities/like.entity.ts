@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  DeleteDateColumn,
 } from 'typeorm';
 import { Article } from './article.entity';
 
@@ -24,13 +23,6 @@ export class Like {
   @ApiProperty({ description: '게시물 id' })
   @Column()
   public articleId: number;
-
-  @ApiProperty({ description: '삭제일' })
-  @DeleteDateColumn({
-    type: 'timestamp',
-    nullable: true,
-  })
-  public deletedAt: Date;
 
   @ManyToOne(() => Article, (article) => article.like, {
     nullable: false,

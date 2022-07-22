@@ -169,7 +169,7 @@ export class ArticleController {
   @ApiCreatedResponse({ description: MSG.unlikeArticle.msg })
   @ApiBearerAuth('access_token')
   @UseGuards(AuthGuard('jwt'))
-  @Patch('/like/:id')
+  @Delete('/like/:id')
   async unlikeArticle(@Param('id') articleId: number, @GetUser() user: User) {
     const result = await this.likeService.unLikeArticle(articleId, user);
     return DefaultResponse.response(
