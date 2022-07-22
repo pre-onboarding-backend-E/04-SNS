@@ -15,8 +15,6 @@ export class LikeService {
   constructor(
     @InjectRepository(Like)
     private likeRepository: Repository<Like>,
-    @InjectRepository(Article)
-    private articleRepository: Repository<Article>,
   ) {}
 
   /**
@@ -30,12 +28,6 @@ export class LikeService {
       .andWhere('articleId = :articleId', { articleId })
       .getOne();
 
-    // .findOne({
-    //   where: {
-    //     userId: user['id'],
-    //     articleId,
-    //   },
-    // });
     if (!isLike.deletedAt) {
       throw new ConflictException('이미 좋아요를 눌렀습니다.');
     }
@@ -60,22 +52,6 @@ export class LikeService {
   }
 
   /**
-   * @description 좋아요가 이미 존재하는지 확인.
-   */
-
-  //   public async checkLike(articleId: number, user: User): Promise<boolean> {
-  //     const isLike = await this.likeRepository.findOne({
-  //       where: {
-  //         userId: user['id'],
-  //         articleId,
-  //       },
-  //     });
-
-  //     if (!isLike) return false; // 좋아요가 눌러지지 않았다면 false,
-  //     return true; // 좋아요가 눌러져있으면 true
-  //   }
-
-  /**
    * @description 좋아요 취소
    */
   public async unLikeArticle(articleId: number, user: User): Promise<object> {
@@ -89,7 +65,4 @@ export class LikeService {
       throw new NotFoundException();
     }
   }
-}
-function andWhere(arg0: string, arg1: { articleId: number }) {
-  throw new Error('Function not implemented.');
 }
