@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -35,14 +36,30 @@ export class ArticleController {
   @ApiResponse({ description: MSG.getOneArticle.msg })
   @Get('/:id')
   async getOneArticle(@Param('id') articleId: number): Promise<object> {
-    return await this.articleService.getOneArticle(articleId);
+    const result = await this.articleService.getArticle(articleId);
+    return DefaultResponse.response(
+      result,
+      MSG.getOneArticle.code,
+      MSG.getOneArticle.msg,
+    );
   }
 
-  //   /**
-  //    * @description 게시글 리스트 요청
-  //    * */
-  //   @Get()
-  //   async getArticleList() {}
+  /**
+   * @description 게시글 리스트 요청
+   * */
+  @ApiResponse({ description: MSG.getArticleList.msg })
+  @Get()
+  async getArticleList(
+    @Query('limit') limit: number | null,
+    @Query('offset') offset: number | null,
+  ): Promise<object> {
+    const result = await this.articleService.getArticleList(limit, offset);
+    return DefaultResponse.response(
+      result,
+      MSG.getArticleList.code,
+      MSG.getArticleList.msg,
+    );
+  }
 
   /**
    * @description 게시글 생성

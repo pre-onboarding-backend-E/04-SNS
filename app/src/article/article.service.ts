@@ -28,7 +28,10 @@ export class ArticleService {
     this.articleHashtagRepository = articleHashtagRepository;
   }
 
-  public async getOneArticle(articleId: number): Promise<object> {
+  /**
+   * @description 게시글 상세 요청
+   */
+  public async getArticle(articleId: number): Promise<object> {
     try {
       const article = await this.articleRepository
         .createQueryBuilder('a')
@@ -55,7 +58,39 @@ export class ArticleService {
       throw new NotFoundException();
     }
   }
+  /**
+   * @description 게시글 목록 요청
+   */
+  public async getArticleList(limit: number, offset: number) {
+    limit = limit || 10; // 가져올 게시글 개수
+    offset = offset || 0; // 어디서부터 게시글을 가져올 지
+    try {
+      const articleList = await this.articleRepository
+        .createQueryBuilder('a')
+        .select([
+          'a.id',
+          'a.title',
+          'a.hashtag',
+          'a.totalLike',
+          'a.totalView',
+          'a.createdAt',
+        ])
+        .addSelect(['u.id', 'u.nickname'])
+        .orderBy('a.createdAt', 'DESC')
+        .leftJoin('a.user', 'u')
+        .skip(offset * limit)
+        .take(limit)
+        .getMany();
 
+      return articleList;
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  /**
+   * @description 게시글 생성 요청
+   */
   public async createArticle(
     articleData: CreateArticleDTO,
     user: User,
@@ -84,6 +119,9 @@ export class ArticleService {
     }
   }
 
+  /**
+   * @description 해시태그를 문자열에서 배열로 전환
+   */
   public async getHashtag(hashtag: string) {
     const regexp = /[^#,]+/g;
     const tagList = [...hashtag.matchAll(regexp)];
@@ -91,6 +129,10 @@ export class ArticleService {
     return hashtags;
   }
 
+  /**
+   * @description 해시태그 여부
+   * 해시태그가 있는지 살펴보고, 없으면 해시태그를 새로 생성합니다.
+   */
   public async findOrCreateHashtag(hashtag: string): Promise<object> {
     let hashtagData = await this.hashtagRepository.findOne({
       where: { hashtag: hashtag },
@@ -105,8 +147,11 @@ export class ArticleService {
     return hashtagData;
   }
 
+  /**
+   * @description 게시글 삭제 요청(soft delete)
+   */
   public async deleteArticle(articleId: number, user: User): Promise<number> {
-    const result = await this.getOneArticle(articleId);
+    const result = await this.getArticle(articleId);
     if (!result) {
       throw new ForbiddenException();
     }
@@ -120,5 +165,8 @@ export class ArticleService {
     return articleId;
   }
 
+  /**
+   * @description 게시글 수정 요청
+   */
   //   public async updateArticle(articleId: number, user: User) {}
 }
