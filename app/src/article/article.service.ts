@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateArticleDTO } from './dto/createArticle.dto';
+import { getArticleListOption } from './dto/getArticleList.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { Article } from './entities/article.entity';
 import { ArticleHashtag } from './entities/article_hashtag.entity';
@@ -62,31 +63,38 @@ export class ArticleService {
   /**
    * @description 게시글 목록 요청
    */
-  public async getArticleList(limit: number, offset: number) {
+  public async getArticleList({ ...articleListOption }: getArticleListOption) {
+    let { search, limit, offset } = articleListOption;
+
+    const qb = await this.articleRepository
+      .createQueryBuilder('a')
+      .select([
+        'a.id',
+        'a.title',
+        'a.hashtag',
+        'a.totalLike',
+        'a.totalView',
+        'a.createdAt',
+      ])
+      .addSelect(['u.id', 'u.nickname']);
+
+    if (search) {
+      qb.andWhere('a.title like :title', {
+        title: `%${search}%`,
+      }).orWhere('a.content like :content', { content: `%${search}%` });
+    }
+
     limit = limit || 10; // 가져올 게시글 개수
     offset = offset || 0; // 어디서부터 게시글을 가져올 지
-    try {
-      const articleList = await this.articleRepository
-        .createQueryBuilder('a')
-        .select([
-          'a.id',
-          'a.title',
-          'a.hashtag',
-          'a.totalLike',
-          'a.totalView',
-          'a.createdAt',
-        ])
-        .addSelect(['u.id', 'u.nickname'])
-        .orderBy('a.createdAt', 'DESC')
-        .leftJoin('a.user', 'u')
-        .skip(offset * limit)
-        .take(limit)
-        .getMany();
 
-      return articleList;
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    const articleList = qb
+      .leftJoin('a.user', 'u')
+      .skip(offset * limit)
+      .take(limit)
+      .getMany();
+    // .orderBy('a.createdAt', 'DESC')
+
+    return articleList;
   }
 
   /**

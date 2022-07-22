@@ -14,6 +14,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -52,13 +53,36 @@ export class ArticleController {
   /**
    * @description 게시글 리스트 요청
    * */
+  @ApiQuery({
+    name: 'search',
+    description: '검색어',
+    example: '영화',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: '조회할 게시글의 수',
+    example: 10,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'offset',
+    description: '조회할 페이지',
+    example: 0,
+    required: false,
+  })
   @ApiResponse({ description: MSG.getArticleList.msg })
   @Get()
   async getArticleList(
-    @Query('limit') limit: number | null,
-    @Query('offset') offset: number | null,
+    @Query('search') search?: string,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
   ): Promise<object> {
-    const result = await this.articleService.getArticleList(limit, offset);
+    const result = await this.articleService.getArticleList({
+      search,
+      limit,
+      offset,
+    });
     return DefaultResponse.response(
       result,
       MSG.getArticleList.code,
@@ -89,9 +113,9 @@ export class ArticleController {
     );
   }
 
-  //   /**
-  //    * @description 게시글 수정
-  //    * */
+  /**
+   * @description 게시글 수정
+   * */
   @ApiCreatedResponse({ description: MSG.deleteArticle.msg })
   @ApiBearerAuth('access_token')
   @UseGuards(AuthGuard('jwt'))
