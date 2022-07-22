@@ -182,35 +182,43 @@ export class ArticleService {
       throw new UnauthorizedException();
     }
 
-    const result = await this.articleRepository
-      .createQueryBuilder()
-      .update(Article)
-      .set(updateArticleData)
-      .where('id = :id', { id: articleId })
-      .execute();
+    try {
+      const result = await this.articleRepository
+        .createQueryBuilder()
+        .update(Article)
+        .set(updateArticleData)
+        .where('id = :id', { id: articleId })
+        .execute();
 
-    if (updateArticleData.hashtag) {
-      await this.updateHashtag(updateArticleData.hashtag, articleId);
+      if (updateArticleData.hashtag) {
+        await this.updateHashtag(updateArticleData.hashtag, articleId);
+      }
+      return result;
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
-    return result;
   }
 
   public async updateHashtag(hashtag: string, articleId: number) {
-    await this.articleHashtagRepository
-      .createQueryBuilder()
-      .delete()
-      .from(ArticleHashtag)
-      .where('articleId = :articleId', { articleId })
-      .execute();
+    try {
+      await this.articleHashtagRepository
+        .createQueryBuilder()
+        .delete()
+        .from(ArticleHashtag)
+        .where('articleId = :articleId', { articleId })
+        .execute();
 
-    const hashtagList = await this.getHashtag(hashtag);
-    for (const tag of hashtagList) {
-      const createHashtag = await this.findOrCreateHashtag(tag);
+      const hashtagList = await this.getHashtag(hashtag);
+      for (const tag of hashtagList) {
+        const createHashtag = await this.findOrCreateHashtag(tag);
 
-      await this.articleHashtagRepository.insert({
-        hashtag: createHashtag,
-        articleId: articleId,
-      });
+        await this.articleHashtagRepository.insert({
+          hashtag: createHashtag,
+          articleId: articleId,
+        });
+      }
+    } catch (e) {
+      throw new InternalServerErrorException();
     }
   }
 }

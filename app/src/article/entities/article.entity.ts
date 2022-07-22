@@ -14,6 +14,7 @@ import {
 import { Like } from './like.entity';
 import { Comment } from './comment.entity';
 import { ArticleHashtag } from './article_hashtag.entity';
+import { ArticleView } from './view.entity';
 @Entity()
 export class Article {
   @ApiProperty()
@@ -92,6 +93,12 @@ export class Article {
   })
   @JoinColumn()
   like: Like[];
+
+  @OneToMany(() => ArticleView, (articleView) => articleView.article, {
+    cascade: true,
+  })
+  @JoinColumn()
+  articleView: ArticleView[];
 
   @OneToMany(() => Comment, (comment) => comment.article, {
     nullable: true,

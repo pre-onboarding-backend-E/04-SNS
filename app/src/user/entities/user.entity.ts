@@ -12,6 +12,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
+import { ArticleView } from 'src/article/entities/view.entity';
 
 @Entity()
 export class User {
@@ -68,6 +69,13 @@ export class User {
   })
   @JoinColumn()
   like: Like[];
+
+  // @OneToMany(() => ArticleView, (articleView) => articleView.user, {
+  //   nullable: true,
+  //   cascade: true,
+  // })
+  // @JoinColumn()
+  // articleView: ArticleView[];
 
   @OneToMany(() => Comment, (comment) => comment.user, {
     nullable: true,
