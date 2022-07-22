@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -34,6 +35,11 @@ export class User {
     return classToPlain(this);
   }
 
-  @OneToMany(() => Post, (post) => post.user)
+  @OneToMany(() => Post, post => post.user)
   posts: Post[];
+
+  @ManyToMany(() => Post, post => post.userLikes, {
+    createForeignKeyConstraints: false,
+  })
+  likeBoards: Post[];
 }
