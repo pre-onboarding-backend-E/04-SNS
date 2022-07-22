@@ -25,11 +25,15 @@ import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { Article } from './entities/article.entity';
+import { LikeService } from './like/like.service';
 
 @ApiTags('Articles')
 @Controller('articles')
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly likeService: LikeService,
+  ) {}
 
   /**
    * @description 게시글 상세 내용 요청
@@ -123,6 +127,38 @@ export class ArticleController {
       result,
       MSG.deleteArticle.code,
       MSG.deleteArticle.msg,
+    );
+  }
+
+  /**
+   * @description 게시글 좋아요 요청
+   * */
+  @ApiCreatedResponse({ description: MSG.likeArticle.msg })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/like/:id')
+  async likeArticle(@Param('id') articleId: number, @GetUser() user: User) {
+    const result = await this.likeService.likeArticle(articleId, user);
+    return DefaultResponse.response(
+      result,
+      MSG.likeArticle.code,
+      MSG.likeArticle.msg,
+    );
+  }
+
+  /**
+   * @description 게시글 좋아요 취소 요청
+   * */
+  @ApiCreatedResponse({ description: MSG.unlikeArticle.msg })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/like/:id')
+  async unlikeArticle(@Param('id') articleId: number, @GetUser() user: User) {
+    const result = await this.likeService.unLikeArticle(articleId, user);
+    return DefaultResponse.response(
+      result,
+      MSG.unlikeArticle.code,
+      MSG.unlikeArticle.msg,
     );
   }
 }

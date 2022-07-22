@@ -6,10 +6,14 @@ import { ArticleService } from './article.service';
 import { Article } from './entities/article.entity';
 import { ArticleHashtag } from './entities/article_hashtag.entity';
 import { Hashtag } from './entities/hashtag.entity';
+import { Like } from './entities/like.entity';
+import { LikeService } from './like/like.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Article, Hashtag, ArticleHashtag])],
+  imports: [
+    TypeOrmModule.forFeature([User, Article, Hashtag, ArticleHashtag, Like]),
+  ],
   controllers: [ArticleController],
-  providers: [ArticleService],
+  providers: [ArticleService, LikeService],
 })
 export class ArticleModule {}
