@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateArticleDTO } from './dto/createArticle.dto';
+import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { Article } from './entities/article.entity';
 import { ArticleHashtag } from './entities/article_hashtag.entity';
 import { Hashtag } from './entities/hashtag.entity';
@@ -151,11 +152,11 @@ export class ArticleService {
    * @description 게시글 삭제 요청(soft delete)
    */
   public async deleteArticle(articleId: number, user: User): Promise<number> {
-    const result = await this.getArticle(articleId);
-    if (!result) {
+    const article = await this.getArticle(articleId);
+    if (!article) {
       throw new ForbiddenException();
     }
-    if (result['user'].id !== user.id) {
+    if (article['user'].id !== user.id) {
       throw new UnauthorizedException();
     }
 
@@ -168,5 +169,48 @@ export class ArticleService {
   /**
    * @description 게시글 수정 요청
    */
-  //   public async updateArticle(articleId: number, user: User) {}
+  public async updateArticle(
+    articleId: number,
+    updateArticleData: UpdateArticleDTO,
+    user: User,
+  ) {
+    const article = await this.getArticle(articleId);
+    if (!article) {
+      throw new ForbiddenException();
+    }
+    if (article['user'].id !== user.id) {
+      throw new UnauthorizedException();
+    }
+
+    const result = await this.articleRepository
+      .createQueryBuilder()
+      .update(Article)
+      .set(updateArticleData)
+      .where('id = :id', { id: articleId })
+      .execute();
+
+    if (updateArticleData.hashtag) {
+      await this.updateHashtag(updateArticleData.hashtag, articleId);
+    }
+    return result;
+  }
+
+  public async updateHashtag(hashtag: string, articleId: number) {
+    await this.articleHashtagRepository
+      .createQueryBuilder()
+      .delete()
+      .from(ArticleHashtag)
+      .where('articleId = :articleId', { articleId })
+      .execute();
+
+    const hashtagList = await this.getHashtag(hashtag);
+    for (const tag of hashtagList) {
+      const createHashtag = await this.findOrCreateHashtag(tag);
+
+      await this.articleHashtagRepository.insert({
+        hashtag: createHashtag,
+        articleId: articleId,
+      });
+    }
+  }
 }

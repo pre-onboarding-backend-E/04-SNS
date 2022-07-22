@@ -16,6 +16,10 @@ export class ArticleHashtag {
   @PrimaryGeneratedColumn('increment')
   public id: number;
 
+  @ApiProperty({ description: '게시물 id' })
+  @Column()
+  public articleId: number;
+
   @ManyToOne(() => Hashtag, (hashtag) => hashtag.articleHashtag, {
     nullable: false,
     onDelete: 'CASCADE',

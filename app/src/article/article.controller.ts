@@ -23,6 +23,7 @@ import { MSG } from 'src/utils/responseHandler/response.enum';
 import { ArticleService } from './article.service';
 import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
+import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { Article } from './entities/article.entity';
 
 @ApiTags('Articles')
@@ -87,18 +88,26 @@ export class ArticleController {
   //   /**
   //    * @description 게시글 수정
   //    * */
-  // @ApiCreatedResponse({ description: MSG.deleteArticle.msg })
-  // @ApiBearerAuth('access_token')
-  // @UseGuards(AuthGuard('jwt'))
-  // @Patch('/:id')
-  // async updateArticle(@Param('id') articleId: number, @GetUser() user: User) {
-  //   const result = await this.articleService.updateArticle(articleId, user);
-  //   return DefaultResponse.response(
-  //     result,
-  //     MSG.updateArticle.code,
-  //     MSG.updateArticle.msg,
-  //   );
-  // }
+  @ApiCreatedResponse({ description: MSG.deleteArticle.msg })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/:id')
+  async updateArticle(
+    @Param('id') articleId: number,
+    @Body() updateArticleData: UpdateArticleDTO,
+    @GetUser() user: User,
+  ) {
+    const result = await this.articleService.updateArticle(
+      articleId,
+      updateArticleData,
+      user,
+    );
+    return DefaultResponse.response(
+      result,
+      MSG.updateArticle.code,
+      MSG.updateArticle.msg,
+    );
+  }
 
   /**
    * @description 게시글 삭제
