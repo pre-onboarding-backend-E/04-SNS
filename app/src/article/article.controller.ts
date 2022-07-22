@@ -24,6 +24,7 @@ import { MSG } from 'src/utils/responseHandler/response.enum';
 import { ArticleService } from './article.service';
 import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
+import { orderByOption, orderOption } from './dto/getArticleList.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { Article } from './entities/article.entity';
 import { LikeService } from './like/like.service';
@@ -71,17 +72,33 @@ export class ArticleController {
     example: 0,
     required: false,
   })
+  @ApiQuery({
+    name: 'order',
+    description: '정렬 방식(오름차순, 내림차순 둘 중 하나)',
+    example: 'DESC',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'orderBy',
+    description: '정렬 기준(작성일, 좋아요 수, 조회수)',
+    example: 'CreatedAt',
+    required: false,
+  })
   @ApiResponse({ description: MSG.getArticleList.msg })
   @Get()
   async getArticleList(
     @Query('search') search?: string,
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
+    @Query('order') order?: orderOption,
+    @Query('orderBy') orderBy?: orderByOption,
   ): Promise<object> {
     const result = await this.articleService.getArticleList({
       search,
       limit,
       offset,
+      order,
+      orderBy,
     });
     return DefaultResponse.response(
       result,

@@ -3,7 +3,7 @@ export interface getArticleListOption {
   offset?: number;
   search?: string;
   filter?: string;
-  order?: string;
+  order?: 'ASC' | 'DESC';
   orderBy?: string;
 }
 
@@ -13,7 +13,7 @@ export enum orderOption {
 }
 
 export enum orderByOption {
-  CREATEDAT = 'CreatedAt',
+  CREATEDAT = 'createdAt',
   TOTALVIEW = 'totalView',
   TOTALLIKE = 'totalLike',
 }
