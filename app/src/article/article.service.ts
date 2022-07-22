@@ -167,6 +167,29 @@ export class ArticleService {
   }
 
   /**
+   * @description 게시글 복구 요청
+   */
+  public async restoreArticle(articleId: number, user: User) {
+    const deletedArticle = await this.articleRepository
+      .createQueryBuilder()
+      .withDeleted()
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('id = :id', { id: articleId })
+      .getOne();
+
+    if (!deletedArticle) {
+      throw new UnauthorizedException('게시물 작성자가 아닙니다.');
+    }
+
+    try {
+      deletedArticle.deletedAt = null;
+      return await this.articleRepository.save(deletedArticle);
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  /**
    * @description 게시글 수정 요청
    */
   public async updateArticle(

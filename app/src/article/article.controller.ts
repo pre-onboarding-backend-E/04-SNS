@@ -131,6 +131,23 @@ export class ArticleController {
   }
 
   /**
+   * @description 게시글 복구
+   * */
+
+  @ApiCreatedResponse({ description: MSG.restoreArticle.msg })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('restoration/:id')
+  async restoreArticle(@Param('id') articleId: number, @GetUser() user: User) {
+    const result = await this.articleService.restoreArticle(articleId, user);
+    return DefaultResponse.response(
+      result,
+      MSG.restoreArticle.code,
+      MSG.restoreArticle.msg,
+    );
+  }
+
+  /**
    * @description 게시글 좋아요 요청
    * */
   @ApiCreatedResponse({ description: MSG.likeArticle.msg })
