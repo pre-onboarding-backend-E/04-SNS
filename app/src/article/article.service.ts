@@ -93,6 +93,15 @@ export class ArticleService {
         qb.leftJoin('a.articleHashtag', 'ha')
           .leftJoin('ha.hashtag', 'h')
           .andWhere('h.hashtag IN (:...hashtag)', { hashtag: tagList });
+
+        // ! 수정
+        // .andWhere(
+        //   new Brackets((qb) => {
+        //     tagList.forEach((tag) => {
+        //       qb = qb.andWhere(`h.hashtag = '${tag}'`);
+        //     });
+        //   }),
+        // );
       }
 
       limit = limit || 10; // 가져올 게시글 개수
