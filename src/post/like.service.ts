@@ -9,9 +9,9 @@ import { Post } from './entity/post.entity';
 export class LikeService {
   constructor(
     @InjectRepository(Post)
-    readonly postRepository: Repository<Post>,
+    private readonly postRepository: Repository<Post>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
   // 좋아요
