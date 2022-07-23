@@ -15,9 +15,6 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  name: string;
-
   @Column({ nullable: true, unique: true })
   email: string;
 
@@ -35,11 +32,9 @@ export class User {
     return classToPlain(this);
   }
 
-  @OneToMany(() => Post, post => post.user)
+  @OneToMany(() => Post, post => post.user, { createForeignKeyConstraints: false })
   posts: Post[];
 
-  @ManyToMany(() => Post, post => post.userLikes, {
-    createForeignKeyConstraints: false,
-  })
-  likeBoards: Post[];
+  @ManyToMany(() => Post, post => post.userLikes, { createForeignKeyConstraints: false })
+  likePosts: Post[];
 }

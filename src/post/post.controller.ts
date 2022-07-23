@@ -79,7 +79,7 @@ export class PostController {
   }
 
   @ApiOperation({
-    summary: '게시물 삭제 조회 API',
+    summary: '게시물 삭제 API',
   })
   @ApiBearerAuth('access_token')
   @UseGuards(AuthGuard('jwt'))

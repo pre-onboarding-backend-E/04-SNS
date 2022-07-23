@@ -26,16 +26,16 @@ export class Post {
   @Column()
   content: string;
 
-  //좋아요 -> join table 설정
   @Column({ default: 0, nullable: true })
   likes: number;
 
-  @ManyToMany(() => User, users => users.likeBoards, {
+  // 좋아요
+  @ManyToMany(() => User, users => users.likePosts, {
     eager: true,
     createForeignKeyConstraints: false,
   })
   @JoinTable({
-    name: 'user_likes_post',
+    name: 'userLikes',
     joinColumn: {
       name: 'postId',
       referencedColumnName: 'id',
@@ -55,7 +55,6 @@ export class Post {
   @OneToMany(() => Hashtags, tags => tags.posts, {
     cascade: true,
     onDelete: 'CASCADE',
-    createForeignKeyConstraints: false,
   })
   tags: Hashtags[];
 

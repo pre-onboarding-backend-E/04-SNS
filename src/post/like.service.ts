@@ -23,7 +23,6 @@ export class LikeService {
       .where('board.id = :id', { id })
       .getOne();
     if (!boardLikes) {
-      //좋아요 없을시 예외처리, 더 좋은방법 강구
       const tempLikes = await this.postRepository.createQueryBuilder('board').where('board.id = :id', { id }).getOne();
       tempLikes.userLikes = [];
       return tempLikes;
@@ -32,8 +31,8 @@ export class LikeService {
   }
 
   async find(id: number) {
-    // const boardsLike = await this.postRepository.findLike(id);
-    // return boardsLike;
+    const boardsLike = await this.findLike(id);
+    return boardsLike;
   }
 
   async add(id: number, @CurrentUser() user: User) {
@@ -43,7 +42,7 @@ export class LikeService {
       },
     });
     // if 작성자가 아니면
-    // const user = await this.userRepository.findOne(where);
+    // const user = await this.userRepository.findOne(user);
     board.userLikes.push(user);
     return this.postRepository.save(board);
   }
