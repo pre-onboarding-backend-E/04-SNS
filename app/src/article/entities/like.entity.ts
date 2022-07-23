@@ -15,7 +15,6 @@ export class Like {
   @PrimaryGeneratedColumn('increment')
   public id: number;
 
-  // userId와 articleId와 1:N 연결
   @ApiProperty({ description: '유저 id' })
   @Column()
   public userId: number;
@@ -24,6 +23,11 @@ export class Like {
   @Column()
   public articleId: number;
 
+  /**
+   * @description
+   * - article : like = 1:N
+   * - user : like = 1:N
+   * */
   @ManyToOne(() => Article, (article) => article.like, {
     nullable: false,
     onDelete: 'CASCADE',

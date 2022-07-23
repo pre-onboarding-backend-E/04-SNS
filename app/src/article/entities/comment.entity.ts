@@ -38,7 +38,12 @@ export class Comment {
   })
   updatedAt: Date;
 
-  // userId와 articleId와 1:N 연결
+  /**
+   * @description
+   * - article : comment = 1:N
+   * - user : comment = 1:N
+   * */
+
   @ManyToOne(() => Article, (article) => article.comment, {
     nullable: false,
     onDelete: 'CASCADE',

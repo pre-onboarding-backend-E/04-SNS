@@ -80,6 +80,14 @@ export class Article {
   })
   public deletedAt: Date;
 
+  /**
+   * @description
+   * - user : article = 1:N
+   * - article : like = 1:N
+   * - article : hashtag = N:M
+   * - article : comment = N:M
+   * */
+
   @ManyToOne(() => User, (user) => user.article, {
     nullable: false,
     onDelete: 'CASCADE',

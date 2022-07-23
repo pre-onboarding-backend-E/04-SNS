@@ -9,7 +9,11 @@ import {
 } from 'typeorm';
 import { Article } from './article.entity';
 import { Hashtag } from './hashtag.entity';
-
+/**
+ * @description
+ * - article : hashtag = N:M
+ * - Article와 Hashtag의 join table 입니다.
+ * */
 @Entity()
 export class ArticleHashtag {
   @ApiProperty()

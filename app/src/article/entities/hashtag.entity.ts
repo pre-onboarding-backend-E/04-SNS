@@ -23,7 +23,10 @@ export class Hashtag {
     unique: true,
   })
   hashtag: string;
-
+  /**
+   * @description
+   * - article : hashtag = N:M
+   * */
   @OneToMany(() => ArticleHashtag, (articleHashtag) => articleHashtag.hashtag, {
     nullable: true,
     cascade: true,

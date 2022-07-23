@@ -19,7 +19,11 @@ export class ArticleView {
   //   @ApiProperty({ description: '사용자 ip 주소' })
   //   ipAddress: ;
 
-  // userId와 articleId와 1:N 연결
+  /**
+   * @description
+   * - article : view = 1:N
+   * - user : view = 1:N
+   * */
   @ManyToOne(() => Article, (article) => article.articleView, {
     nullable: false,
     onDelete: 'CASCADE',

@@ -55,22 +55,6 @@ export class UserController {
     );
   }
 
-  // /**
-  //  * @description 유저 정보 조회
-  //  */
-  // @ApiBearerAuth('access_token')
-  // @UseGuards(JwtAuthGuard)
-  // @Get('/:userId')
-  // @ApiCreatedResponse({
-  //   description: MSG.getUser.msg,
-  //   type: LookupUserResponse,
-  // })
-  // async getUserInfo(@Param('userId') userId: number) {
-  //   const result = await this.userService.getUserByEmail(userId);
-
-  //   return UserResponse.response(result, MSG.getUser.code, MSG.getUser.msg);
-  // }
-
   /**
    * @description access token, resfresh token 발급하여 로그인 처리
    */

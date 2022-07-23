@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -107,13 +106,12 @@ export class ArticleService {
         // );
       }
 
-      limit = limit || 10; // 가져올 게시글 개수
-      offset = offset || 0; // 어디서부터 게시글을 가져올 지
+      limit = limit || 10;
+      offset = offset || 0;
       order = order || orderOption.DESC;
       orderBy = orderByOption[orderBy] || orderByOption.CREATEDAT;
 
       const articleList = qb
-
         .orderBy(`a.${orderBy}`, order)
         .addSelect(['u.id', 'u.nickname'])
         .leftJoin('a.user', 'u')
@@ -136,12 +134,12 @@ export class ArticleService {
   ): Promise<any> {
     try {
       const { content, title, hashtag } = articleData;
-      const article = new Article();
-      article.user = user;
-      article.content = content;
-      article.title = title;
-      article.hashtag = hashtag;
-
+      const article = await this.articleRepository.create({
+        user: user,
+        content,
+        title,
+        hashtag,
+      });
       const newArticle = await this.articleRepository.save(article);
       const hashtagList = await this.getHashtag(hashtag);
 
@@ -189,19 +187,16 @@ export class ArticleService {
   /**
    * @description 게시글 삭제 요청(soft delete)
    */
-  public async deleteArticle(articleId: number, user: User): Promise<number> {
-    const article = await this.getArticle(articleId);
-    if (!article) {
-      throw new ForbiddenException();
-    }
-    if (article['user'].id !== user.id) {
+  public async deleteArticle(articleId: number, user: User): Promise<object> {
+    const result = await this.articleRepository.softDelete({
+      id: articleId,
+      user: user,
+    });
+
+    if (!result.affected) {
       throw new UnauthorizedException();
     }
-
-    await this.articleRepository.softDelete({
-      id: articleId,
-    });
-    return articleId;
+    return { id: articleId };
   }
 
   /**
@@ -235,29 +230,21 @@ export class ArticleService {
     updateArticleData: UpdateArticleDTO,
     user: User,
   ) {
-    const article = await this.getArticle(articleId);
-    if (!article) {
-      throw new ForbiddenException();
+    const result = await this.articleRepository
+      .createQueryBuilder()
+      .update(Article)
+      .set(updateArticleData)
+      .where('id = :id', { id: articleId })
+      .andWhere('userId = :userId', { userId: user.id })
+      .execute();
+
+    if (updateArticleData.hashtag) {
+      await this.updateHashtag(updateArticleData.hashtag, articleId);
     }
-    if (article['user'].id !== user.id) {
+    if (result.affected == 0) {
       throw new UnauthorizedException();
     }
-
-    try {
-      const result = await this.articleRepository
-        .createQueryBuilder()
-        .update(Article)
-        .set(updateArticleData)
-        .where('id = :id', { id: articleId })
-        .execute();
-
-      if (updateArticleData.hashtag) {
-        await this.updateHashtag(updateArticleData.hashtag, articleId);
-      }
-      return result;
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    return result;
   }
 
   public async updateHashtag(hashtag: string, articleId: number) {

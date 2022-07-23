@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateArticleDTO {
   @ApiProperty({
@@ -31,6 +25,5 @@ export class CreateArticleDTO {
     example: '#맛집,#서울,#브런치 카페,#주말',
   })
   @IsString()
-  // @Matches('^#[가-힣a-zA-Z0-9]')
   readonly hashtag;
 }
