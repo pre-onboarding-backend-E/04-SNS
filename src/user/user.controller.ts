@@ -1,21 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiExcludeEndpoint,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginInput } from 'src/auth/dto/login.dto';
 import { CurrentUser } from './decorator/currenUser';
@@ -27,22 +11,14 @@ import { UserService } from './user.service';
 @ApiTags('user')
 @Controller()
 export class UserController {
-  constructor(
-    readonly userService: UserService, // readonly postService: PostService,
-    readonly authService: AuthService,
-  ) {
-    return this;
-  }
+  constructor(readonly userService: UserService, readonly authService: AuthService) {}
 
   @ApiOperation({
     summary: '로그인 API',
   })
   @Post('/login')
   async getToken(@Body() input: LoginInput): Promise<string> {
-    const user = await this.authService.validateUser(
-      input.email,
-      input.password,
-    );
+    const user = await this.authService.validateUser(input.email, input.password);
     return this.authService.generateToken(user);
   }
 
@@ -69,10 +45,7 @@ export class UserController {
 
   @ApiExcludeEndpoint()
   @Patch('/user')
-  async updateUser(
-    @CurrentUser() user: User,
-    @Body() input: UpdateUserInput,
-  ): Promise<User> {
+  async updateUser(@CurrentUser() user: User, @Body() input: UpdateUserInput): Promise<User> {
     return this.userService.updateUser(user, input);
   }
 }

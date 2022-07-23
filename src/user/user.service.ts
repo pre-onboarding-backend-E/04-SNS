@@ -5,6 +5,7 @@ import { CreateUserInput } from './dto/createUser.input';
 import { UpdateUserInput } from './dto/updateUser.input';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
+import { ErrorType } from 'src/utils/response/error.type';
 
 @Injectable()
 export class UserService {
@@ -32,11 +33,11 @@ export class UserService {
 
   async createUser(input: CreateUserInput): Promise<User> {
     const userExistCheck = this.findOne(input.email);
-    if (userExistCheck) throw new BadRequestException('user already exists');
+    if (userExistCheck) throw new BadRequestException(ErrorType.emailAlreadyExists);
 
     const { email, password, confirmPassword } = input;
     if (password !== confirmPassword) {
-      throw new BadRequestException('invalid password');
+      throw new BadRequestException(ErrorType.invalidPassword);
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = this.userRepository.create({
@@ -48,7 +49,7 @@ export class UserService {
   }
 
   async updateUser(user: User, input: UpdateUserInput): Promise<User> {
-    Object.keys(input).forEach((key) => {
+    Object.keys(input).forEach(key => {
       user[key] = input[key];
     });
 

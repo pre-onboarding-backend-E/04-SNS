@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
+import { ErrorType } from 'src/utils/response/error.type';
 import { In, Like, Repository } from 'typeorm';
 import { CreatePostInput } from './dto/createPost.input';
 import { filterPostDto } from './dto/filterPost.input';
@@ -27,7 +28,7 @@ export class PostService {
       },
       relations: ['tags'],
     });
-    if (!result) throw new NotFoundException('해당 게시물이 없습니다.');
+    if (!result) throw new NotFoundException(ErrorType.postNotFound);
     return result;
   }
 
@@ -143,10 +144,10 @@ export class PostService {
       .getOne();
 
     if (!existPost) {
-      throw new NotFoundException('존재하지 않는 내역입니다.');
+      throw new NotFoundException(ErrorType.postNotFound);
     }
     if (existPost.deletedAt === null) {
-      throw new BadRequestException('삭제되지 않은 내역입니다.');
+      throw new BadRequestException(ErrorType.postNotDeleted);
     }
     existPost.deletedAt = null;
     return await this.postRepository.save(existPost);
@@ -159,7 +160,7 @@ export class PostService {
       .where('post.id=:id', { id })
       .andWhere('post.user.id=:userId', { userId: user.id })
       .getOne();
-    if (!existPost) throw new NotFoundException('posting info not found');
+    if (!existPost) throw new NotFoundException(ErrorType.postNotFound);
     return existPost;
   }
 }
