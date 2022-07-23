@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/user/decorator/currenUser';
 import { User } from '..//user/user.entity';
 import { CreatePostInput } from './dto/createPost.input';
@@ -99,6 +99,7 @@ export class PostController {
     return this.likeService.likePost(id, user);
   }
 
+  @ApiExcludeEndpoint()
   @ApiOperation({
     summary: '좋아요 취소 API',
   })
@@ -107,5 +108,13 @@ export class PostController {
   @UseGuards(AuthGuard('jwt'))
   async deleteLike(@Param('postId', ParseIntPipe) id: number, @CurrentUser() user: User) {
     return this.likeService.deleteLikePost(id, user);
+  }
+
+  @ApiOperation({
+    summary: '좋아요 개수 API',
+  })
+  @Get('/:postId/like')
+  async countLikePost(@Param('postId', ParseIntPipe) id: number) {
+    return this.likeService.countLikePost(id);
   }
 }
