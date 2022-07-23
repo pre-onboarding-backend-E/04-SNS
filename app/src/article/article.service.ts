@@ -55,6 +55,9 @@ export class ArticleService {
         .where('a.id = :id', { id: articleId })
         .getOne();
 
+      article.totalView++;
+      await this.articleRepository.save(article);
+
       if (article.hashtag) {
         const hashtagList = await this.getHashtag(article.hashtag);
         return { ...article, hashtag: hashtagList };
