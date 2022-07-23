@@ -96,6 +96,16 @@ export class PostController {
   @ApiBearerAuth('access_token')
   @UseGuards(AuthGuard('jwt'))
   async likePost(@Param('postId', ParseIntPipe) id: number, @CurrentUser() user: User) {
-    return this.likeService.add(id, user);
+    return this.likeService.likePost(id, user);
+  }
+
+  @ApiOperation({
+    summary: '좋아요 취소 API',
+  })
+  @Delete('/:postId/like')
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteLike(@Param('postId', ParseIntPipe) id: number, @CurrentUser() user: User) {
+    return this.likeService.deleteLikePost(id, user);
   }
 }

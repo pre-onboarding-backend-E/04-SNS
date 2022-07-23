@@ -32,7 +32,7 @@ export class UserService {
   }
 
   async createUser(input: CreateUserInput): Promise<User> {
-    const userExistCheck = this.findOne(input.email);
+    const userExistCheck = await this.findOne(input.email);
     if (userExistCheck) throw new BadRequestException(ErrorType.emailAlreadyExists);
 
     const { email, password, confirmPassword } = input;
