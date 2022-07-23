@@ -84,6 +84,12 @@ export class ArticleController {
     example: 'CreatedAt',
     required: false,
   })
+  @ApiQuery({
+    name: 'filter',
+    description: '해시태그로 필터링',
+    example: '서울,맛집',
+    required: false,
+  })
   @ApiResponse({ description: MSG.getArticleList.msg })
   @Get()
   async getArticleList(
@@ -92,6 +98,7 @@ export class ArticleController {
     @Query('offset') offset?: number,
     @Query('order') order?: orderOption,
     @Query('orderBy') orderBy?: orderByOption,
+    @Query('filter') filter?: string,
   ): Promise<object> {
     const result = await this.articleService.getArticleList({
       search,
@@ -99,6 +106,7 @@ export class ArticleController {
       offset,
       order,
       orderBy,
+      filter,
     });
     return DefaultResponse.response(
       result,

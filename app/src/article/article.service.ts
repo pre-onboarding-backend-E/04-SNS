@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateArticleDTO } from './dto/createArticle.dto';
 import {
   getArticleListOption,
@@ -70,7 +70,7 @@ export class ArticleService {
   public async getArticleList({ ...articleListOption }: getArticleListOption) {
     try {
       let { limit, offset, order, orderBy } = articleListOption;
-      const { search } = articleListOption;
+      const { search, filter } = articleListOption;
       const qb = await this.articleRepository
         .createQueryBuilder('a')
         .select([
@@ -80,13 +80,19 @@ export class ArticleService {
           'a.totalLike',
           'a.totalView',
           'a.createdAt',
-        ])
-        .addSelect(['u.id', 'u.nickname']);
+        ]);
 
       if (search) {
         qb.andWhere('a.title like :title', {
           title: `%${search}%`,
         }).orWhere('a.content like :content', { content: `%${search}%` });
+      }
+
+      if (filter) {
+        const tagList = filter.split(',');
+        qb.leftJoin('a.articleHashtag', 'ha')
+          .leftJoin('ha.hashtag', 'h')
+          .andWhere('h.hashtag IN (:...hashtag)', { hashtag: tagList });
       }
 
       limit = limit || 10; // 가져올 게시글 개수
@@ -95,7 +101,9 @@ export class ArticleService {
       orderBy = orderByOption[orderBy] || orderByOption.CREATEDAT;
 
       const articleList = qb
+
         .orderBy(`a.${orderBy}`, order)
+        .addSelect(['u.id', 'u.nickname'])
         .leftJoin('a.user', 'u')
         .skip(offset * limit)
         .take(limit)
