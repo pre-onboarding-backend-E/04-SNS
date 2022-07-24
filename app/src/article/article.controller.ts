@@ -22,8 +22,10 @@ import { User } from 'src/user/entities/user.entity';
 import { GetUser } from 'src/utils/helper/getUserDecorator';
 import { MSG } from 'src/utils/responseHandler/response.enum';
 import { ArticleService } from './article.service';
+import { CommentService } from './comment/comment.service';
 import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
+import { CreateCommentDto } from './dto/createComment.dto';
 import { orderByOption, orderOption } from './dto/getArticleList.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { LikeService } from './like/like.service';
@@ -34,6 +36,7 @@ export class ArticleController {
   constructor(
     private readonly articleService: ArticleService,
     private readonly likeService: LikeService,
+    private readonly commentService: CommentService,
   ) {}
 
   /**
@@ -239,6 +242,34 @@ export class ArticleController {
       result,
       MSG.getUsersLike.code,
       MSG.getUsersLike.msg,
+    );
+  }
+
+  /**
+   * @description 게시글 댓글 생성 요청
+   * */
+
+  @ApiCreatedResponse({ description: MSG.createComment.msg })
+  @ApiBody({
+    type: CreateCommentDto,
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/comments/:id')
+  async createComment(
+    @Param('id') articleId: number,
+    @Body() commentDto: CreateCommentDto,
+    @GetUser() user: User,
+  ) {
+    const result = await this.commentService.createComment(
+      articleId,
+      commentDto,
+      user,
+    );
+
+    return DefaultResponse.response(
+      result,
+      MSG.createComment.code,
+      MSG.createComment.msg,
     );
   }
 }

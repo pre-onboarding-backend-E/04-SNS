@@ -3,17 +3,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
+import { CommentService } from './comment/comment.service';
 import { Article } from './entities/article.entity';
 import { ArticleHashtag } from './entities/article_hashtag.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { Like } from './entities/like.entity';
 import { LikeService } from './like/like.service';
+import { Comment } from './entities/comment.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Article, Hashtag, ArticleHashtag, Like]),
+    TypeOrmModule.forFeature([
+      User,
+      Article,
+      Hashtag,
+      ArticleHashtag,
+      Like,
+      Comment,
+    ]),
   ],
   controllers: [ArticleController],
-  providers: [ArticleService, LikeService],
+  providers: [ArticleService, LikeService, CommentService],
 })
 export class ArticleModule {}

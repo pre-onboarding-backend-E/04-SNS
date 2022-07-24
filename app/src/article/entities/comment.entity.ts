@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Article } from './article.entity';
 
@@ -21,14 +22,14 @@ export class Comment {
   @Column({
     nullable: false,
   })
-  comment: string;
+  public comment: string;
 
   @ApiProperty({ description: '댓글 생성일' })
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
-  createdAt: Date;
+  public createdAt: Date;
 
   @ApiProperty({ description: '댓글 수정일' })
   @UpdateDateColumn({
@@ -36,7 +37,14 @@ export class Comment {
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
-  updatedAt: Date;
+  public updatedAt: Date;
+
+  @ApiProperty({ description: '댓글 삭제일' })
+  @DeleteDateColumn({
+    type: 'timestamp',
+    nullable: true,
+  })
+  public deletedAt: Date;
 
   /**
    * @description

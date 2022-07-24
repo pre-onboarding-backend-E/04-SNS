@@ -14,4 +14,5 @@ export const MSG = {
   likeArticle: { code: 201, msg: '게시물 좋아요 요청에 성공하였습니다.' },
   unlikeArticle: { code: 200, msg: '게시물 좋아요가 취소되었습니다.' },
   getUsersLike: { code: 200, msg: '게시물 좋아요 목록 요청에 성공하였습니다.' },
+  createComment: { code: 201, msg: '게시물 댓글 생성 요청에 성공하였습니다.' },
 };
