@@ -7,16 +7,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Brackets, Repository } from 'typeorm';
-import { CreateArticleDTO } from './dto/createArticle.dto';
+import { CreateArticleDTO } from '../dto/createArticle.dto';
 import {
   getArticleListOption,
   orderByOption,
   orderOption,
-} from './dto/getArticleList.dto';
-import { UpdateArticleDTO } from './dto/updateArticle.dto';
-import { Article } from './entities/article.entity';
-import { ArticleHashtag } from './entities/article_hashtag.entity';
-import { Hashtag } from './entities/hashtag.entity';
+} from '../dto/getArticleList.dto';
+import { UpdateArticleDTO } from '../dto/updateArticle.dto';
+import { Article } from '../entities/article.entity';
+import { ArticleHashtag } from '../entities/article_hashtag.entity';
+import { Hashtag } from '../entities/hashtag.entity';
 
 @Injectable()
 export class ArticleService {

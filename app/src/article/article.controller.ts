@@ -21,14 +21,14 @@ import {
 import { User } from 'src/user/entities/user.entity';
 import { GetUser } from 'src/utils/helper/getUserDecorator';
 import { MSG } from 'src/utils/responseHandler/response.enum';
-import { ArticleService } from './article.service';
-import { CommentService } from './comment/comment.service';
+import { ArticleService } from './service/article.service';
+import { CommentService } from './service/comment.service';
 import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
 import { CreateCommentDto } from './dto/createComment.dto';
 import { orderByOption, orderOption } from './dto/getArticleList.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
-import { LikeService } from './like/like.service';
+import { LikeService } from './service/like.service';
 
 @ApiTags('Articles')
 @Controller('articles')
