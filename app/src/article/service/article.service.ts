@@ -241,7 +241,7 @@ export class ArticleService {
     if (updateArticleData.hashtag) {
       await this.updateHashtag(updateArticleData.hashtag, articleId);
     }
-    if (result.affected == 0) {
+    if (result.affected === 0) {
       throw new UnauthorizedException();
     }
     return result;

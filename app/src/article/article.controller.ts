@@ -29,6 +29,7 @@ import { CreateCommentDto } from './dto/createComment.dto';
 import { orderByOption, orderOption } from './dto/getArticleList.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
 import { LikeService } from './service/like.service';
+import { UpdateCommentDto } from './dto/updateComment.dto';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -273,6 +274,9 @@ export class ArticleController {
     );
   }
 
+  /**
+   * @description 게시글 댓글 삭제 요청
+   * */
   @ApiResponse({ description: MSG.deleteComment.msg })
   @UseGuards(AuthGuard('jwt'))
   @Delete('/comments/:comment_id')
@@ -285,6 +289,29 @@ export class ArticleController {
       result,
       MSG.deleteComment.code,
       MSG.deleteComment.msg,
+    );
+  }
+
+  /**
+   * @description 게시글 댓글 수정 요청
+   * */
+  @ApiResponse({ description: MSG.updateComment.msg })
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/comments/:comment_id')
+  async updatecomment(
+    @Param('comment_id') commentId: number,
+    @Body() updateCommentDto: UpdateCommentDto,
+    @GetUser() user: User,
+  ) {
+    const result = await this.commentService.updateComment(
+      commentId,
+      updateCommentDto,
+      user,
+    );
+    return DefaultResponse.response(
+      result,
+      MSG.updateComment.code,
+      MSG.updateComment.msg,
     );
   }
 }
