@@ -51,6 +51,10 @@ export class ArticleService {
         ])
         .addSelect(['u.id', 'u.nickname'])
         .leftJoin('a.user', 'u')
+        .leftJoin('a.comment', 'cm')
+        .addSelect(['cm.id', 'cm.comment', 'cm.createdAt'])
+        .leftJoin('cm.user', 'cu')
+        .addSelect(['cu.id', 'cu.nickname'])
         .where('a.id = :id', { id: articleId })
         .getOne();
 
