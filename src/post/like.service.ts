@@ -19,6 +19,7 @@ export class LikeService {
    * @description
    *  - (1) 작성자 == 좋아요를 보내려는 사용자라면 좋아요를 누를 수 없음.
    *  - (2) 이미 좋아요를 누른 유저의 경우, 다시 해당 게시물에 좋아요를 누를 수 없음.
+   *  - (3) 해당 좋아요 개수를 post에 반영함.
    */
   async likePost(id: number, @CurrentUser() user: User): Promise<Post> {
     const existPost = await this.postService.getOnePost(id);
@@ -31,7 +32,12 @@ export class LikeService {
       if (likeUsers.id == user.id) throw new BadRequestException(ErrorType.userAlreadyLiked);
     });
     existPost.userLikes.push(user);
-    return this.postRepository.save(existPost);
+
+    await this.postRepository.save(existPost);
+
+    // (3)
+    const result = await this.countLikePost(id);
+    return result;
   }
 
   /**
@@ -51,20 +57,19 @@ export class LikeService {
 
   /**
    * @description
-   *  - 게시글의 좋아요 개수를 count & return
+   *  - 게시글의 좋아요 개수를 count 하고 해당 count를 기존 포스트에 저장함.
    */
   async countLikePost(id: number) {
     const existPost = await this.postService.getOnePost(id);
 
     const allLikes = await this.postRepository
       .createQueryBuilder('post')
-      .leftJoinAndSelect('post.userLikes', 'userLikes');
-    // .loadRelationCountAndMap('post.likeCount', 'userLikes.id')
-    // .getCount('userLike')
-    // .getMany();
+      .innerJoinAndSelect('post.userLikes', 'Like')
+      .select('COUNT(*)', 'likeCounts')
+      .where('post.id = :id', { id })
+      .getRawOne();
 
-    console.log(allLikes);
-
-    // return this.postRepository.save(existPost);
+    existPost.likes = Number(allLikes.likeCounts);
+    return existPost;
   }
 }

@@ -26,6 +26,7 @@ export class Post {
   @Column()
   content: string;
 
+  // 좋아요 카운트
   @Column({ default: 0, nullable: true })
   likes: number;
 
