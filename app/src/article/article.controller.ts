@@ -272,4 +272,19 @@ export class ArticleController {
       MSG.createComment.msg,
     );
   }
+
+  @ApiResponse({ description: MSG.deleteComment.msg })
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('/comments/:comment_id')
+  async deleteComment(
+    @Param('comment_id') commentId: number,
+    @GetUser() user: User,
+  ) {
+    const result = await this.commentService.softDeleteComment(commentId, user);
+    return DefaultResponse.response(
+      result,
+      MSG.deleteComment.code,
+      MSG.deleteComment.msg,
+    );
+  }
 }
