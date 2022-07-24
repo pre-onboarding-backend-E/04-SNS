@@ -26,7 +26,6 @@ import { DefaultResponse } from './dto/article.response';
 import { CreateArticleDTO } from './dto/createArticle.dto';
 import { orderByOption, orderOption } from './dto/getArticleList.dto';
 import { UpdateArticleDTO } from './dto/updateArticle.dto';
-import { Article } from './entities/article.entity';
 import { LikeService } from './like/like.service';
 
 @ApiTags('Articles')
@@ -215,7 +214,7 @@ export class ArticleController {
   /**
    * @description 게시글 좋아요 취소 요청
    * */
-  @ApiCreatedResponse({ description: MSG.unlikeArticle.msg })
+  @ApiResponse({ description: MSG.unlikeArticle.msg })
   @ApiBearerAuth('access_token')
   @UseGuards(AuthGuard('jwt'))
   @Delete('/like/:id')
@@ -225,6 +224,21 @@ export class ArticleController {
       result,
       MSG.unlikeArticle.code,
       MSG.unlikeArticle.msg,
+    );
+  }
+
+  /**
+   * @description 게시글 좋아요 누른 사람 목록 요청
+   * */
+
+  @ApiResponse({ description: MSG.getUsersLike.msg })
+  @Get('/like/:id')
+  async getUsersLike(@Param('id') articleId: number) {
+    const result = await this.likeService.getUsersPushLike(articleId);
+    return DefaultResponse.response(
+      result,
+      MSG.getUsersLike.code,
+      MSG.getUsersLike.msg,
     );
   }
 }

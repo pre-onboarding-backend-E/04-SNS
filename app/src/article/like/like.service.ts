@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -75,6 +76,27 @@ export class LikeService {
       return { totalLike: result.totalLike };
     } catch (e) {
       throw new NotFoundException();
+    }
+  }
+
+  /**
+   * @description 좋아요 누른 사람 목록 요청
+   */
+  public async getUsersPushLike(articleId: number) {
+    try {
+      const result = await this.articleRepository
+        .createQueryBuilder('a')
+        .select(['a.id', 'a.totalLike'])
+        .where('a.id = :id', { id: articleId })
+        .leftJoin('a.like', 'lk')
+        .leftJoin('lk.user', 'u')
+        .addSelect(['lk.userId'])
+        .addSelect(['u.nickname'])
+        .getOne();
+
+      return result;
+    } catch (e) {
+      throw new BadRequestException();
     }
   }
 }
