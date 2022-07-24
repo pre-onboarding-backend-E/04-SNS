@@ -12,7 +12,6 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { compare } from 'bcryptjs';
 import { ErrorType } from 'src/utils/responseHandler/error.enum';
-import { UserInfoDTO } from './dto/userInfo.dto';
 
 @Injectable()
 export class UserService {
@@ -106,20 +105,5 @@ export class UserService {
     return await this.userRepository.update(id, {
       hashedRefreshToken: null,
     });
-  }
-
-  /**
-   * @description id로 사용자를 가져옵니다.
-   */
-  async getUserById(userId: number) {
-    const user: User = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException(ErrorType.userNotFound.msg);
-    }
-
-    return user;
   }
 }

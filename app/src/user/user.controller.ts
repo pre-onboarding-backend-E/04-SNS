@@ -55,6 +55,14 @@ export class UserController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access_token')
+  @Get()
+  async getUserInfo(@GetUser() user: User) {
+    const result = await this.userService.getUserByEmail(user.email);
+    return UserResponse.response(result, MSG.getUser.code, MSG.getUser.msg);
+  }
+
   /**
    * @description access token, resfresh token 발급하여 로그인 처리
    */
