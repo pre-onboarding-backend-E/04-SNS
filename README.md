@@ -22,7 +22,7 @@
 
 <br><br/>
 ### 🌱 기술 스택
-
+<div aligin = "center">
 <br>
 <img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/mysql-icon.svg">
 <img alt= "icon" wide="60" height="60" src ="https://velog.velcdn.com/images/sjy0917/post/45b7622b-54df-4f04-bd83-278c33c9bc90/typeorm.png">
@@ -35,6 +35,8 @@
 <img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/restapi-icon.svg">
 
 <br />
+</div>
+<br/>
 
 ### 📝 ETC
 
@@ -113,8 +115,6 @@ JWT_EXPIRES_IN=1d
 
 * 회원 가입과 로그인은 email과 password를 입력받고 이를 jwt를 통해 인증하는 과정을 거칩니다. `access-Token`의 만료 기한은 env/.env에서 설정 가능하며 sample 기준으로 24h 입니다.
 </br>  
-
-<br />
 
 ### B. sns post (게시물)
 
