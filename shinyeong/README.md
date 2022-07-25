@@ -216,6 +216,9 @@ SNS(Social Networking service) 서비스 입니다.
 
 </div>
 </details>
+
+<br />
+
 <details>
 <summary>게시글 좋아요 요청</summary>
 <div markdown="1">
@@ -247,6 +250,9 @@ SNS(Social Networking service) 서비스 입니다.
 
 </div>
 </details>
+
+<br />
+
 <details>
 <summary>게시글 댓글 생성 </summary>
 <div markdown="1">
@@ -300,3 +306,20 @@ $ docker compose up
 
 - local
   - http://localhost:3000/api/docs 접속
+
+#### ENV
+
+- 위치: /env/.env
+- local에서 실행시 샘플로 사용할 env는 다음과 같습니다
+
+```
+DB_HOST=database-server
+DB_PORT=3309
+DB_USERNAME=root
+DB_PASSWORD=1111
+DB_DATABASE=sns
+JWT_SECRET_KEY=TestSecretKey
+JWT_EXPIRATION_TIME=15m
+JWT_REFRESH_TOKEN_SECRET=RefreshTokenSecretTest
+JWT_REFRESH_TOKEN_EXPIRATION_TIME=30d
+```
