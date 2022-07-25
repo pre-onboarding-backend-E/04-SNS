@@ -20,7 +20,8 @@
 
   - 프로젝트 수행 기간 : 2022/07/20~07/25 
 
-<br><br/>
+<br/>
+
 ### 🌱 기술 스택
 <div aligin = "center">
 <br>
@@ -28,7 +29,6 @@
 <img alt= "icon" wide="60" height="60" src ="https://velog.velcdn.com/images/sjy0917/post/45b7622b-54df-4f04-bd83-278c33c9bc90/typeorm.png">
 <img alt ="icon" wide ="60" height="60" src="https://www.svgrepo.com/show/354107/nestjs.svg">
 <img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/docker-icon.svg">
-&nbsp&nbsp
 <img alt= "icon" wide="60" height="60" src ="https://upload.wikimedia.org/wikipedia/commons/a/ab/Swagger-logo.png">
 <img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/ts-icon.svg">
 <img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/aws-icon.svg">
@@ -36,7 +36,7 @@
 
 <br />
 </div>
-<br/>
+<br></br>
 
 ### 📝 ETC
 
@@ -86,7 +86,7 @@ $ docker compose up
 - local
   - http://localhost:3001/api/docs
 
-**:bulb: ENV**
+**3. ENV** :bulb:
 
 - /env/.env  (샘플 예시입니다.)
 
@@ -128,9 +128,10 @@ JWT_EXPIRES_IN=1d
 | 게시물 복구 | PATCH | api/post/{postId/restore} |
 | 좋아요 💗   | POST   |  api/post/{postId/like}    |
 <br/>
-* 게시물의 수정/삭제/복구는 `해당 게시물의 작성자만` 할 수 있습니다. {postId} (게시물 번호)를 parameter로 해당 api를 사용합니다. 
 
-* 게시물 상세와 목록은 로그인한 `모든 유저`가 조회할 수 있습니다. 
+* 게시물 상세와 목록은 로그인한 `모든 유저`가 조회할 수 있습니다.
+
+* 게시물의 수정/삭제/복구는 `해당 게시물의 작성자만` 할 수 있습니다. {postId} (게시물 번호)를 parameter로 해당 api를 사용합니다. 
 
 * 게시물 상세 조회 시 조회 수가 증가합니다.
 
