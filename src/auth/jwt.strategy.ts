@@ -4,13 +4,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { ErrorType } from 'src/utils/response/error.type';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    readonly configService: ConfigService,
-    readonly userService: UserService,
-  ) {
+  constructor(readonly configService: ConfigService, readonly userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -28,6 +26,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
     }
 
-    throw new UnauthorizedException();
+    throw new UnauthorizedException(ErrorType.unauthorizedUser);
   }
 }

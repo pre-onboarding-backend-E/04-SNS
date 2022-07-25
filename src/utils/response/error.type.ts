@@ -3,6 +3,7 @@ export const ErrorType = {
   userNotFound: '존재하지 않는 유저입니다!',
   emailAlreadyExists: '해당 이메일은 이미 사용중입니다!',
   invalidPassword: '비밀번호가 일치하지 않습니다!',
+  unauthorizedUser: '호출자에게 필요한 권한이 없습니다!',
 
   /**post*/
   postNotFound: '존재하지 않는 게시물입니다!',
