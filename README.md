@@ -1,11 +1,11 @@
-
 # 04-SNS-project :family:
 
 ## 목차
 
 - [😃 프로젝트 개요](#😃-프로젝트-개요)
 - [:cd: 기술 스택](#cd-기술-스택)
-- [🌵 ERD](#🌵-erd)
+- [🌵 ETC](#🌵-etc)
+- [:full_moon: 프로젝트 실행 및 테스트](#fullmoon-프로젝트-실행-및-테스트)
 - [🤹🏼‍♂️ 요구사항](#🤹🏼‍♂️-요구사항)
   - [A. 유저 관리](#a-유저-관리)
   - [B. 게시글](#b-게시글)
@@ -31,11 +31,92 @@ SNS(Social Networking service) 서비스 입니다.
 
 <br />
 
-### 🌵 ERD
+### 🌵 ETC
+
+<details>
+<summary>ERD</summary>
+<div markdown="1">
 
 ![snsERD_1.png](./image/erd.png)
 
+</div>
+</details>
+
+<details>
+<summary>Git Commit Convention</summary>
+<div markdown="1">
+
+- ADD / 기능 신규 개발
+- MODIFY / 기존 기능 수정
+- REFACTOR / 기존 기능 개선
+- FIX / 버그 픽스
+- REMOVE / 불필요한 로직 제거
+- DOCS / 문서 작업
+- COMMENT / 코드 리뷰 반영 결과
+- git issue 관련 내용 상세
+
+  ```bash
+  ADD / 00기능을 구현하였습니다.
+
+  00기능을 구현하였습니다.
+  ~~ 코드를 수정하였습니다.
+
+  Resolve: #00
+  Ref: #00
+  Relate to: #00
+  ```
+
+  - Resolve: #이슈 넘버 (이슈를 해결함)
+  - Ref: #이슈 넘버 (이슈 참고)
+  - Relate to: #이슈 넘버 (관련된 이슈)
+
+- CHORE / 기타 작은 사항들. 패키지 설치 등
+</div>
+</details>
+
+- Docker & GCP를 이용한 배포: http://34.64.79.27:3000/api/docs/
+- Lint, Prettier 포맷팅
   <br />
+
+### :full_moon: 프로젝트 실행 및 테스트
+
+**1. 실행 방법** :bulb:
+
+- local에서 실행시 명령어
+
+```bash
+$ git clone https://github.com/pre-onboarding-backend-E/04-SNS
+$ git checkout shinyeong
+$ cd app
+$ docker compose build
+$ docker compose up
+```
+
+**2. API 테스트 방법(Swagger API DOCS)** :bulb:
+
+- 배포 링크
+  - http://34.64.79.27:3000/api/docs/
+- local
+  - http://localhost:3000/api/docs
+
+**:bulb: ENV**
+
+- 위치: /env/.env
+- local에서 실행시 샘플로 사용할 env는 다음과 같습니다
+
+```
+DB_HOST=database-server
+DB_PORT=3309
+DB_USERNAME=root
+DB_PASSWORD=1111
+DB_DATABASE=sns
+JWT_SECRET_KEY=TestSecretKey
+JWT_EXPIRATION_TIME=15m
+JWT_REFRESH_TOKEN_SECRET=RefreshTokenSecretTest
+JWT_REFRESH_TOKEN_EXPIRATION_TIME=30d
+```
+
+<br />
 
 ### 🤹🏼‍♂️ 요구사항
 
@@ -277,28 +358,3 @@ SNS(Social Networking service) 서비스 입니다.
 </details>
 
 <br />
-
-### :full_moon: 프로젝트 실행 및 테스트
-
-**1. 실행 방법** :bulb:
-
-- local에서 실행시 명령어
-
-```bash
-$ git clone https://github.com/pre-onboarding-backend-E/04-SNS
-$ git checkout shinyeong
-$ cd app
-$ docker compose build
-$ docker compose up
-```
-
-**2. API 테스트 방법** :bulb:
-
-- local
-  - http://localhost:3000/api/docs
-
-**3. Swagger 테스트 방법** :bulb:
-
-- local
-  - http://localhost:3000/api/docs 접속
-
