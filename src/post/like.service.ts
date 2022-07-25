@@ -1,57 +1,75 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CurrentUser } from 'src/user/decorator/currenUser';
 import { User } from 'src/user/user.entity';
+import { ErrorType } from 'src/utils/response/error.type';
 import { Repository } from 'typeorm';
 import { Post } from './entity/post.entity';
+import { PostService } from './post.service';
 
 @Injectable()
 export class LikeService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly postService: PostService,
   ) {}
 
-  // 좋아요
-  async findLike(id: number) {
-    const boardLikes = await this.postRepository
-      .createQueryBuilder('board')
-      .innerJoinAndSelect('board.userLikes', 'Like')
-      .loadRelationCountAndMap('board.LikeCount', 'board.userLikes', 'LikeCount')
-      .where('board.id = :id', { id })
-      .getOne();
-    if (!boardLikes) {
-      const tempLikes = await this.postRepository.createQueryBuilder('board').where('board.id = :id', { id }).getOne();
-      tempLikes.userLikes = [];
-      return tempLikes;
-    }
-    return boardLikes;
-  }
+  /**
+   * @description
+   *  - (1) 작성자 == 좋아요를 보내려는 사용자라면 좋아요를 누를 수 없음.
+   *  - (2) 이미 좋아요를 누른 유저의 경우, 다시 해당 게시물에 좋아요를 누를 수 없음.
+   *  - (3) 해당 좋아요 개수를 post에 반영함.
+   */
+  async likePost(id: number, @CurrentUser() user: User): Promise<Post> {
+    const existPost = await this.postService.getOnePost(id);
 
-  async find(id: number) {
-    const boardsLike = await this.findLike(id);
-    return boardsLike;
-  }
+    // (1)
+    if (existPost.userId == user.id) throw new BadRequestException(ErrorType.postAuthorIsSame);
 
-  async add(id: number, @CurrentUser() user: User) {
-    const board = await this.postRepository.findOne({
-      where: {
-        id: id,
-      },
+    // (2)
+    existPost.userLikes.filter(likeUsers => {
+      if (likeUsers.id == user.id) throw new BadRequestException(ErrorType.userAlreadyLiked);
     });
-    // if 작성자가 아니면
-    // const user = await this.userRepository.findOne(user);
-    board.userLikes.push(user);
-    return this.postRepository.save(board);
+    existPost.userLikes.push(user);
+
+    await this.postRepository.save(existPost);
+
+    // (3)
+    const result = await this.countLikePost(id);
+    return result;
   }
 
-  async delete(id: number, uid: number) {
-    const board = await this.findLike(id);
-    board.userLikes = board.userLikes.filter(likeUsers => {
-      return likeUsers.id !== uid;
+  /**
+   * @description
+   *  - 게시글의 좋아요를 취소함.
+   */
+  async deleteLikePost(id: number, user: User): Promise<Post> {
+    const existPost = await this.postService.getOnePost(id);
+
+    existPost.userLikes = existPost.userLikes.filter(likeUsers => {
+      if (likeUsers.id !== user.id) {
+        throw new BadRequestException(ErrorType.invalideLikedUser);
+      } else return existPost;
     });
-    return this.postRepository.save(board);
+    return this.postRepository.save(existPost);
+  }
+
+  /**
+   * @description
+   *  - 게시글의 좋아요 개수를 count 하고 해당 count를 기존 포스트에 저장함.
+   */
+  async countLikePost(id: number) {
+    const existPost = await this.postService.getOnePost(id);
+
+    const allLikes = await this.postRepository
+      .createQueryBuilder('post')
+      .innerJoinAndSelect('post.userLikes', 'Like')
+      .select('COUNT(*)', 'likeCounts')
+      .where('post.id = :id', { id })
+      .getRawOne();
+
+    existPost.likes = Number(allLikes.likeCounts);
+    return existPost;
   }
 }

@@ -7,8 +7,6 @@ export class Hashtags {
   id: number;
 
   @ManyToOne(() => Post, posts => posts.tags, {
-    // onDelete: 'CASCADE',
-    // onUpdate: 'CASCADE',
     cascade:['soft-remove'],
     createForeignKeyConstraints: false,
   })
