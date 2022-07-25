@@ -1,16 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiExcludeEndpoint, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/user/decorator/currenUser';
@@ -31,6 +19,8 @@ export class PostController {
   @ApiOperation({
     summary: '게시물 상세 조회 API',
   })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
   @Get('/:postId')
   async getPost(@Param('postId') id: number): Promise<PostEntity> {
     return this.postService.getOnePost(id);
@@ -40,6 +30,8 @@ export class PostController {
   @ApiOperation({
     summary: '게시물 목록 조회 API',
   })
+  @ApiBearerAuth('access_token')
+  @UseGuards(AuthGuard('jwt'))
   @Get('/')
   async posts(@Query() filter: filterPostDto): Promise<PostEntity[]> {
     return this.postService.getAllPosts(filter);
@@ -97,24 +89,5 @@ export class PostController {
   @UseGuards(AuthGuard('jwt'))
   async likePost(@Param('postId', ParseIntPipe) id: number, @CurrentUser() user: User) {
     return this.likeService.likePost(id, user);
-  }
-
-  @ApiExcludeEndpoint()
-  @ApiOperation({
-    summary: '좋아요 취소 API',
-  })
-  @Delete('/:postId/like')
-  @ApiBearerAuth('access_token')
-  @UseGuards(AuthGuard('jwt'))
-  async deleteLike(@Param('postId', ParseIntPipe) id: number, @CurrentUser() user: User) {
-    return this.likeService.deleteLikePost(id, user);
-  }
-
-  @ApiOperation({
-    summary: '좋아요 개수 API',
-  })
-  @Get('/:postId/like')
-  async countLikePost(@Param('postId', ParseIntPipe) id: number) {
-    return this.likeService.countLikePost(id);
   }
 }

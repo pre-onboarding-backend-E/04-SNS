@@ -42,21 +42,6 @@ export class LikeService {
 
   /**
    * @description
-   *  - 게시글의 좋아요를 취소함.
-   */
-  async deleteLikePost(id: number, user: User): Promise<Post> {
-    const existPost = await this.postService.getOnePost(id);
-
-    existPost.userLikes = existPost.userLikes.filter(likeUsers => {
-      if (likeUsers.id !== user.id) {
-        throw new BadRequestException(ErrorType.invalideLikedUser);
-      } else return existPost;
-    });
-    return this.postRepository.save(existPost);
-  }
-
-  /**
-   * @description
    *  - 게시글의 좋아요 개수를 count 하고 해당 count를 기존 포스트에 저장함.
    */
   async countLikePost(id: number) {
