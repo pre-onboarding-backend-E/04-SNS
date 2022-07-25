@@ -2,12 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class filterPostDto {
   // searching (검색) - 제목 기준 (해당 검색어를 포함하는 것만 노출)
-  @ApiProperty({ description: '검색어 (기본 값으로는 공백을 보냅니다)', nullable: true, required: false })
+  @ApiProperty({ description: '검색어 (기본 값은 비워서 보냅니다.)', nullable: true, required: false })
   keyword?: Array<string>;
 
   // filtering - 해시 태그 (명확하게 일치하는 것만 노출)
   @ApiProperty({
-    description: '해시태그 (기본 값으로는 공백을 보냅니다.)',
+    description: '해시태그 (기본 값은 비워서 보냅니다.)',
     nullable: true,
     required: false,
   })
