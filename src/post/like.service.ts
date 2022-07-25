@@ -19,7 +19,7 @@ export class LikeService {
    * @description
    *  - (1) 작성자 == 좋아요를 보내려는 사용자라면 좋아요를 누를 수 없음.
    *  - (2) 이미 좋아요를 누른 유저의 경우, 다시 해당 게시물에 좋아요를 누를 수 없음.
-   *  - (3) 해당 좋아요 개수를 post에 반영함.
+   *  - (3) 해당 좋아요 개수를 post에 반영하여 return함.
    */
   async likePost(id: number, @CurrentUser() user: User): Promise<Post> {
     const existPost = await this.postService.getOnePost(id);
@@ -55,6 +55,8 @@ export class LikeService {
       .getRawOne();
 
     existPost.likes = Number(allLikes.likeCounts);
-    return existPost;
+
+    const result = await this.postRepository.save(existPost);
+    return result;
   }
 }

@@ -1,4 +1,11 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { ErrorType } from 'src/utils/response/error.type';
@@ -8,12 +15,15 @@ import { filterPostDto } from './dto/filterPost.input';
 import { UpdatePostInput } from './dto/updatePost.input';
 import { Hashtags } from './entity/hashTag.entity';
 import { Post } from './entity/post.entity';
+import { LikeService } from './like.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post)
     readonly postRepository: Repository<Post>,
+    @Inject(forwardRef(() => LikeService))
+    private readonly likeService: LikeService,
     @InjectRepository(Hashtags)
     private tagRepository: Repository<Hashtags>,
   ) {}
@@ -26,14 +36,13 @@ export class PostService {
       where: {
         id: id,
       },
-      relations: ['tags'],
+      relations: ['tags', 'userLikes'],
     });
     if (!existPost) throw new NotFoundException(ErrorType.postNotFound);
 
     existPost.views++;
-    await this.postRepository.save(existPost);
-
-    return existPost;
+    const result = await this.postRepository.save(existPost);
+    return result;
   }
 
   /**
