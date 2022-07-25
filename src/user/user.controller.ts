@@ -9,7 +9,7 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 
 @ApiTags('user')
-@Controller()
+@Controller('users')
 export class UserController {
   constructor(readonly userService: UserService, readonly authService: AuthService) {}
 

@@ -19,7 +19,7 @@ export class LikeService {
    * @description
    *  - (1) 작성자 == 좋아요를 보내려는 사용자라면 좋아요를 누를 수 없음.
    *  - (2) 이미 좋아요를 누른 유저의 경우, 다시 해당 게시물에 좋아요를 누를 수 없음.
-   *  - (3) 해당 좋아요 개수를 post에 반영함.
+   *  - (3) 해당 좋아요 개수를 post에 반영하여 return함.
    */
   async likePost(id: number, @CurrentUser() user: User): Promise<Post> {
     const existPost = await this.postService.getOnePost(id);
@@ -42,21 +42,6 @@ export class LikeService {
 
   /**
    * @description
-   *  - 게시글의 좋아요를 취소함.
-   */
-  async deleteLikePost(id: number, user: User): Promise<Post> {
-    const existPost = await this.postService.getOnePost(id);
-
-    existPost.userLikes = existPost.userLikes.filter(likeUsers => {
-      if (likeUsers.id !== user.id) {
-        throw new BadRequestException(ErrorType.invalideLikedUser);
-      } else return existPost;
-    });
-    return this.postRepository.save(existPost);
-  }
-
-  /**
-   * @description
    *  - 게시글의 좋아요 개수를 count 하고 해당 count를 기존 포스트에 저장함.
    */
   async countLikePost(id: number) {
@@ -70,6 +55,8 @@ export class LikeService {
       .getRawOne();
 
     existPost.likes = Number(allLikes.likeCounts);
-    return existPost;
+
+    const result = await this.postRepository.save(existPost);
+    return result;
   }
 }
