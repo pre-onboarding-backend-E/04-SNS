@@ -1,36 +1,141 @@
-1. 위 요구사항 분석을 바탕으로, 개발해야하는 모델링 및 API 를 설계 한 뒤 개발을 시작하세요.
+# 04-SNS-project / sns-service
 
-- 모델링 (ERD).
-  [] user - post - hastTag
-- API 의 method, URL, Request data 예시, response 예시 (API Document).
-- swagger에 필수만 남김.
-- 나머지 부가사항은 apiExlude 처리하여 code상에서만 기록되게끔 함.
-- Readme 에 작성.
+## 목차
 
-2. 처음부터 모든 기능을 구현하고자 목적하기 보다, 서비스 필수 기능을 우선 계획 및 개발하세요.
+- [🔎 프로젝트 개요](#🔎-프로젝트-개요)
+- [🌱 기술 스택](#🌱-기술-스택)
+- [📝 ETC](#📝-ETC)
+- [✨ 프로젝트 실행 및 테스트](#✨-프로젝트-실행-및-테스트)
+- [✅요구사항 분석](#✅-요구사항-분석)
+  - [A. sns user (사용자)](#a-sns-user-(사용자))
+  - [B. sns post (게시물)](#B-sns-post-(게시물))
 
-- API Document 를 참조하여 개발합니다.
-- ex) 아래는 예시입니다. 진행하실때는 직접 분류하여 보세요.
+<br />
 
-  - 1차 개발(=필수기능): 유저 전반기능, 게시글 생성(해시태그 입력 제외), 게시글 수정, 게시글 삭제(복구 기능 제외), 게시글 상세보기(좋아요, 조회수 기능 제외), 게시글 목록(4가지 기능 제외).
+### 🔎 프로젝트 개요
+  <br/> 
+   주제 : SNS(Social Networking service) 서비스 
 
-  * 기능 개발 완료 : 유저 전반 기능 (회원가입 / 로그인 / jwt 인증)
-  * 게시글 생성 (해시태그 입력 포함) -> 구현 완료
-  * 게시글 수정 / 삭제 (게시글 복구 미포함) -> 구현 완료 / 성능 고려 추가 정의.
-  * 게시글 상세보기 -> 구현 완료 (해시태그 조회 미 구현)
-  * 게시글 목록 -> 기본 구현 완료. 필터 구현 중
+  <br/>
 
-  - 2차 개발(=부가기능): 해시태그 입력, 게시글 복구, 좋아요 기능, 조회수 기능, 게시글 목록 4가지 기능.
+  - 사용자는 본 서비스에 접속하여 로그인 / 게시물 업로드 / 게시물 조회 / 게시글 좋아요 등의 기능을 이용할 수 있습니다. <br />
 
-  * 해시 태그 입력 / 수정 =>\*완료
-  * 게시글 복구
-  * 좋아요 기능 (좋아요 / 좋아요 취소 / 싫어요 구현 예정)
+  - 프로젝트 수행 기간 : 2022/07/20~07/25 
 
-(선택사항) 3. 3차 개발(=고도화), 추가적인 기능을 직접 정의하여 구현하세요.
+<br><br/>
+### 🌱 기술 스택
 
-- 2차 개발이 모두 완료된 이후에 진행하세요.
-  (ex) 댓글 기능 / 싫어요, 공감해요 기능 / 조회수가 1인당 1번만 오르도록 제한 등)
+<br>
+<img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/mysql-icon.svg">
+<img alt= "icon" wide="60" height="60" src ="https://velog.velcdn.com/images/sjy0917/post/45b7622b-54df-4f04-bd83-278c33c9bc90/typeorm.png">
+<img alt ="icon" wide ="60" height="60" src="https://www.svgrepo.com/show/354107/nestjs.svg">
+<img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/docker-icon.svg">
+&nbsp&nbsp
+<img alt= "icon" wide="60" height="60" src ="https://upload.wikimedia.org/wikipedia/commons/a/ab/Swagger-logo.png">
+<img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/ts-icon.svg">
+<img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/aws-icon.svg">
+<img alt= "icon" wide="60" height="60" src ="https://techstack-generator.vercel.app/restapi-icon.svg">
 
-  - 배포 (docker + nginx + aws EC2)
-  - 조회수 기능 및 조회수 1인 1번 제한 (구현 여부 미 확정..)
-  - 테스트 코드 (구현 여부 미 확정..)
+<br />
+
+### 📝 ETC
+
+<details>
+<summary>ERD</summary>
+<div markdown="1">
+
+![snsERD_1.png](./image/sns-erd.png)
+
+</div>
+</details>
+
+<details>
+<summary>Swagger Docs</summary>
+<div markdown="1">
+
+![swagger.PNG](./image/swagger.PNG)
+
+</div>
+</details>
+
+<details>
+<summary>Code & Convention</summary>
+
+- [Git Commit Convention](https://github.com/pre-onboarding-backend-E/03-BossRaid-E/wiki/Commit-Convention)
+
+- Lint, Prettier 포맷팅 <br />
+</details>
+<br></br>
+
+### ✨ 프로젝트 실행 및 테스트
+
+**1. 실행 방법** :bulb:
+
+- local에서 실행시 명령어
+
+```bash
+$ git clone https://github.com/pre-onboarding-backend-E/04-SNS
+$ git checkout haneul
+$ cd 04-SNS
+$ docker compose build
+$ docker compose up
+```
+
+**2. API 테스트 방법(Swagger API DOCS)** :bulb:
+
+- local
+  - http://localhost:3001/api/docs
+
+**:bulb: ENV**
+
+- /env/.env  (샘플 예시입니다.)
+
+```
+DB_HOST=database-server
+DB_PORT=3307
+DB_USERNAME=root
+DB_PASSWORD=1234
+DB_DATABASE=wantedsns
+JWT_SECRET=secret
+JWT_EXPIRES_IN=1d
+```
+
+<br />
+
+### ✅ 요구사항 분석
+
+### A. sns user (사용자)
+
+| 기능     | method | url                                   |
+| -------- | ------ | ------------------------------------- |
+| 회원가입 | POST   | /api/users/register       |
+| 로그인   | POST   | /api/users/login |
+
+<br/>
+
+* 회원 가입과 로그인은 email과 password를 입력받고 이를 jwt를 통해 인증하는 과정을 거칩니다. `access-Token`의 만료 기한은 env/.env에서 설정 가능하며 sample 기준으로 24h 입니다.
+</br>  
+
+<br />
+
+### B. sns post (게시물)
+
+| 기능               | method | url                                                                          |
+| ------------------ | ------ | ---------------------------------------------------------------------------- |
+| 게시물 생성        | POST   | api/post             |
+| 게시물 목록 조회       | GET    |  api/post |
+| 게시물 수정        | PATCH  |  api/post/{postId}              |
+| 게시물 삭제        | DELETE |  api/post/{postId}        |
+| 게시물 상세 조회   | GET    | api/post/{postId}       |
+| 게시물 복구 | PATCH | api/post/{postId/restore} |
+| 좋아요 💗   | POST   |  api/post/{postId/like}    |
+<br/>
+* 게시물의 수정/삭제/복구는 `해당 게시물의 작성자만` 할 수 있습니다. {postId} (게시물 번호)를 parameter로 해당 api를 사용합니다. 
+
+* 게시물 상세와 목록은 로그인한 `모든 유저`가 조회할 수 있습니다. 
+
+* 게시물 상세 조회 시 조회 수가 증가합니다.
+
+* 게시물 조회 시 키워드/해시태그 검색값은 기본적으로 공백으로 두며 n개의 경우 배열의 형태로 보내집니다. 
+
+* 타인의 게시물에 좋아요를 추가할 수 있습니다.
