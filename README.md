@@ -3,6 +3,7 @@
 ## 목차
 
 - [😃 프로젝트 개요](#😃-프로젝트-개요)
+- [:cd: 기술 스택](#cd-기술-스택)
 - [🌵 ERD](#🌵-erd)
 - [🤹🏼‍♂️ 요구사항](#🤹🏼‍♂️-요구사항)
   - [A. 유저 관리](#a-유저-관리)
@@ -17,6 +18,16 @@ SNS(Social Networking service) 서비스 입니다.
 
 사용자는 본 서비스에 접속하여 게시물을 업로드 하거나, 다른 사람의 게시물을 확인할 수 있습니다.
 게시글에 좋아요를 누를 수 있습니다.
+<br />
+
+#### :cd: 기술 스택
+
+<img src="https://img.shields.io/badge/Typescript-3178C6?style=flat&logo=typescript&logoColor=white"/>
+<img src="https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white"/>
+<img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white"/>
+<img src="https://img.shields.io/badge/NodeJS-339933?style=flat&logo=nodejs&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/>
+
 <br />
 
 ### 🌵 ERD
