@@ -1,4 +1,3 @@
-
 # 04-SNS-project :family:
 
 ## 목차
@@ -359,31 +358,3 @@ JWT_REFRESH_TOKEN_EXPIRATION_TIME=30d
 </details>
 
 <br />
-<<<<<<< HEAD
-=======
-
-### :full_moon: 프로젝트 실행 및 테스트
-
-**1. 실행 방법** :bulb:
-
-- local에서 실행시 명령어
-
-```bash
-$ git clone https://github.com/pre-onboarding-backend-E/04-SNS
-$ git checkout shinyeong
-$ cd app
-$ docker compose build
-$ docker compose up
-```
-
-**2. API 테스트 방법** :bulb:
-
-- local
-  - http://localhost:3000/api/docs
-
-**3. Swagger 테스트 방법** :bulb:
-
-- local
-  - http://localhost:3000/api/docs 접속
-
->>>>>>> 2b928daddfe870c96ad7017476f28077b25eb6b7
