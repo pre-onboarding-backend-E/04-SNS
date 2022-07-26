@@ -13,30 +13,21 @@
 <br>
 위의 요구사항에서 미루어 봤을 때, 필요한 EndPoit 는 다음과 같다고 생각했다. (root /api)
 <br>
+```
 A. 유저 /users
-<br>
-회원가입 POST /signUp
-<br>
+회원가입      POST /signUp
 로그인 및 인증 POST /login
-<br>
-Token 재발급 GET /refreshAccessToken
-<br>
+Token 재발급 GET  /refreshAccessToken
+
 B. 게시글 /posts
-<br>
-생성 POST /
-<br>
-수정 PATCH /{postId}
-<br>
-삭제 DELETE /{postId}
-<br>
-복구 PATCH /restore/{postId}
-<br>
-목록 GET /
-<br>
-상세보기 GET /{postId}
-<br>
+생성    POST   /
+수정    PATCH  /{postId}
+삭제    DELETE /{postId}
+복구    PATCH  /restore/{postId}
+목록    GET    /
+상세보기 GET    /{postId}
+
 C. 좋아요 /likes
-<br>
-좋아요 PUT /like/{postId} 
-<br>
+좋아요     PUT /like/{postId} 
 좋아요 취소 PUT /unlike/{postId}
+```
