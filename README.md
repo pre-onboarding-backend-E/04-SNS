@@ -15,30 +15,28 @@
 <br>
 A. 유저 /users
 <br>
-머리1 | 머리2 | 머리3 | 뚝배기
----- | ---- | ---- | ----
-다리 | | | 뚝배기깹니다
-금 | 의 | 환 | 향
-|기능|HTTP Method|EndPoint|
-|---|---|---|
-|회원가입|POST|/signUp|
-|로그인 및 인증|POST|/login|
-|Token 재발급|GET|/refreshAccessToken|
+회원가입 POST /signUp
+<br>
+로그인 및 인증 POST /login
+<br>
+Token 재발급 GET /refreshAccessToken
 <br>
 B. 게시글 /posts
 <br>
-|기능|HTTP Method|EndPoint|
-|---|---|---|
-|생성|POST|/|
-|수정|PATCH|/{postId}|
-|삭제|DELETE|/{postId}|
-|복구|PATCH|/restore/{postId}|
-|목록|GET|/|
-|상세보기|GET|/{postId}|
+생성 POST /
+<br>
+수정 PATCH /{postId}
+<br>
+삭제 DELETE /{postId}
+<br>
+복구 PATCH /restore/{postId}
+<br>
+목록 GET /
+<br>
+상세보기 GET /{postId}
 <br>
 C. 좋아요 /likes
 <br>
-|기능|HTTP Method|EndPoint|
-|---|---|---|
-|좋아요|PUT|/like/{postId}|
-|좋아요 취소|PUT|/unlike/{postId}|
+좋아요 PUT /like/{postId} 
+<br>
+좋아요 취소 PUT /unlike/{postId}
