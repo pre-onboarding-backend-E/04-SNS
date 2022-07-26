@@ -14,14 +14,14 @@
 위의 요구사항에서 미루어 봤을 때, 필요한 EndPoit 는 다음과 같다고 생각했다. (root /api)
 A. 유저 /users
 |기능|HTTP Method|EndPoint|
-|:------:|:---:|:---------:|
+|:---:|:---:|:---:|
 |회원가입|POST|/signUp|
 |로그인 및 인증|POST|/login|
 |Token 재발급|GET|/refreshAccessToken|
 <br>
 B. 게시글 /posts
 |기능|HTTP Method|EndPoint|
-|:------:|:---:|:---:|
+|:---:|:---:|:---:|
 |생성|POST|/|
 |수정|PATCH|/{postId}|
 |삭제|DELETE|/{postId}|
@@ -30,5 +30,7 @@ B. 게시글 /posts
 |상세보기|GET|/{postId}|
 <br>
 C. 좋아요 /likes
+|기능|HTTP Method|EndPoint|
+|:---:|:---:|:---:|
 |좋아요|PUT|/like/{postId}|
 |좋아요 취소|PUT|/unlike/{postId}|
