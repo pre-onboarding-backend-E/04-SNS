@@ -12,7 +12,6 @@
 <img width="719" alt="스크린샷 2022-07-26 오후 4 40 44" src="https://user-images.githubusercontent.com/79984416/180951023-2cb7cbcb-4469-45e2-ad7a-8aaa4ecde98f.png">
 <br>
 위의 요구사항에서 미루어 봤을 때, 필요한 EndPoit 는 다음과 같다고 생각했다. (root /api)
-<br>
 ```
 A. 유저 /users
 회원가입      POST /signUp
