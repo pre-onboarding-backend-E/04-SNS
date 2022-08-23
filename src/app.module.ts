@@ -1,14 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { BoardModule } from './board/board.module';
 import { LikeModule } from './like/like.module';
 import { UserModule } from './user/user.module';
+import { PostModule } from './post/post.module';
+import { CommentModule } from './comment/comment.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/exception/http-exception.filter';
+import { AppController } from './app.controller';
 
 @Module({
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    }
+  ],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -28,11 +36,8 @@ import { UserModule } from './user/user.module';
       retryDelay: 5000,
       timezone: 'Z',
     }),
-    AuthModule, 
-    BoardModule, 
-    LikeModule, UserModule
+    AuthModule, LikeModule, UserModule, PostModule, CommentModule
   ],
   controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
